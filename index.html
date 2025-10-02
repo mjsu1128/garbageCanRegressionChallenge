@@ -66,9 +66,6 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="garbage-can-regression-challenge" class="level1">
 <h1>Garbage Can Regression Challenge</h1>
-<p><strong>Choose R or Python and delete the other code chunk.</strong></p>
-<section id="r-code" class="level2">
-<h2 class="anchored" data-anchor-id="r-code">R Code</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>   Stress StressSurvey Time Anxiety
@@ -89,7 +86,6 @@ ul.task-list li input[type="checkbox"] {
 15     12           12  2.2   12.22</code></pre>
 </div>
 </div>
-</section>
 <section id="bivariate-regression-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="bivariate-regression-analysis">Bivariate Regression Analysis</h2>
 <section id="regression-of-anxiety-on-stress-survey" class="level3">
@@ -313,9 +309,464 @@ Regression Equation: Anxiety = -1.524 + 1.047 × StressSurvey</code></pre>
 </div>
 </section>
 </section>
-<section id="your-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="your-analysis">Your Analysis</h2>
-<p>Follow the challenge instructions from your course to complete your analysis.</p>
+<section id="question-3-bivariate-regression-of-anxiety-on-time" class="level2">
+<h2 class="anchored" data-anchor-id="question-3-bivariate-regression-of-anxiety-on-time">Question 3: Bivariate Regression of Anxiety on Time</h2>
+<section id="regression-of-anxiety-on-time" class="level3">
+<h3 class="anchored" data-anchor-id="regression-of-anxiety-on-time">Regression of Anxiety on Time</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Anxiety ~ Time, data = observDF)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.8010 -1.5605 -0.5605  2.4395  4.1508 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)   -3.680      2.233  -1.648  0.12330   
+Time           5.341      1.305   4.093  0.00127 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.323 on 13 degrees of freedom
+Multiple R-squared:  0.563, Adjusted R-squared:  0.5294 
+F-statistic: 16.75 on 1 and 13 DF,  p-value: 0.00127</code></pre>
+</div>
+</div>
+</section>
+<section id="estimated-coefficients-for-time-model" class="level3">
+<h3 class="anchored" data-anchor-id="estimated-coefficients-for-time-model">Estimated Coefficients for Time Model</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Estimated Coefficients (Anxiety ~ Time):</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>======================================</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Intercept (β₀): -3.6801 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Time (β₁): 5.3406 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression Equation: Anxiety = -3.6801 + 5.3406 × Time</code></pre>
+</div>
+</div>
+</section>
+<section id="comparison-with-true-relationship" class="level3">
+<h3 class="anchored" data-anchor-id="comparison-with-true-relationship">Comparison with True Relationship</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>COMPARISON: Estimated vs True Relationships (Time Model)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=======================================================</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>True generating equation: Anxiety = Stress + 0.1 × Time</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Estimated equation: Anxiety = -3.6801 + 5.3406 × Time</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coefficient Analysis:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>--------------------</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Intercept:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  True (in generating model): 0</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Estimated: -3.6801 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Difference: -3.6801 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Time coefficient:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  True: 0.1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Estimated: 5.3406 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Difference: 5.2406 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model Fit:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  R-squared: 0.563 ( 56.3 % of variance explained)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+IMPORTANT NOTE:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This model omits the Stress variable, which is a major component</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>of the true relationship. This creates omitted variable bias.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The Time coefficient may be biased because Stress and Time are</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>correlated in the data generation process.</code></pre>
+</div>
+</div>
+</section>
+<section id="scatter-plot-anxiety-vs-time" class="level3">
+<h3 class="anchored" data-anchor-id="scatter-plot-anxiety-vs-time">Scatter Plot: Anxiety vs Time</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>png 
+  2 </code></pre>
+</div>
+</div>
+</section>
+<section id="time-model-fit-assessment-and-commentary" class="level3">
+<h3 class="anchored" data-anchor-id="time-model-fit-assessment-and-commentary">Time Model Fit Assessment and Commentary</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>TIME MODEL FIT ANALYSIS:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>========================</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>1. GOODNESS OF FIT:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   R-squared: 0.563 ( 56.3 % of variance explained)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Adjusted R-squared: 0.5294 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   ⚠ Moderate fit - model explains some variance</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+2. STATISTICAL SIGNIFICANCE:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   F-statistic: 16.7509 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   p-value: 0.0012702 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   ✓ Very significant relationship (p &lt; 0.01)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+3. COEFFICIENT SIGNIFICANCE:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Time coefficient p-value: 0.0012702 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   ✓ Time coefficient is statistically significant</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+4. COMPARISON WITH STRESS SURVEY MODEL:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   StressSurvey model R-squared: 0.9011 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Time model R-squared: 0.563 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   → StressSurvey explains more variance than Time alone</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+5. POTENTIAL ISSUES:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   • OMITTED VARIABLE BIAS: Major issue - Stress variable is missing</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   • True relationship: Anxiety = Stress + 0.1 × Time</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   • This model only uses Time, ignoring the dominant Stress effect</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   • Time coefficient may be biased due to correlation with omitted Stress</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   • Small sample size: Only 15 observations</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   • Limited Time variation: Time values range from 0 to 2.2 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+6. RESIDUAL ANALYSIS:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mean of residuals: 0 (should be ~0)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Standard deviation of residuals: 3.2018 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   ✓ Residuals centered around zero</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+7. COEFFICIENT ACCURACY:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   True Time coefficient: 0.1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Estimated Time coefficient: 5.3406 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Bias: 5.2406 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   ⚠ Coefficient estimate is significantly biased</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="question-5-multiple-regression-of-anxiety-on-stresssurvey-and-time" class="level2">
+<h2 class="anchored" data-anchor-id="question-5-multiple-regression-of-anxiety-on-stresssurvey-and-time">Question 5: Multiple Regression of Anxiety on StressSurvey and Time</h2>
+<section id="multiple-regression-model" class="level3">
+<h3 class="anchored" data-anchor-id="multiple-regression-model">Multiple Regression Model</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Anxiety ~ StressSurvey + Time, data = observDF)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.3904 -0.9896  0.3288  0.6240  2.2912 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    0.5888     1.0339   0.569   0.5795    
+StressSurvey   1.4269     0.1722   8.287 2.62e-06 ***
+Time          -2.7799     1.1111  -2.502   0.0278 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.334 on 12 degrees of freedom
+Multiple R-squared:  0.935, Adjusted R-squared:  0.9242 
+F-statistic: 86.32 on 2 and 12 DF,  p-value: 7.538e-08</code></pre>
+</div>
+</div>
+</section>
+<section id="estimated-coefficients-for-multiple-regression" class="level3">
+<h3 class="anchored" data-anchor-id="estimated-coefficients-for-multiple-regression">Estimated Coefficients for Multiple Regression</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Estimated Coefficients (Anxiety ~ StressSurvey + Time):</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=====================================================</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Intercept (β₀): 0.5888 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>StressSurvey (β₁): 1.4269 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Time (β₂): -2.7799 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression Equation: Anxiety = 0.5888 + 1.4269 × StressSurvey + -2.7799 × Time</code></pre>
+</div>
+</div>
+</section>
+<section id="comparison-with-true-relationship-1" class="level3">
+<h3 class="anchored" data-anchor-id="comparison-with-true-relationship-1">Comparison with True Relationship</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>COMPARISON: Estimated vs True Relationships (Multiple Regression)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>================================================================</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>True generating equation: Anxiety = Stress + 0.1 × Time</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Estimated equation: Anxiety = 0.5888 + 1.4269 × StressSurvey + -2.7799 × Time</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coefficient Analysis:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>--------------------</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Intercept:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  True (in generating model): 0</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Estimated: 0.5888 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Difference: 0.5888 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>StressSurvey coefficient:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Expected (1/3 of true Stress coefficient): 0.3333 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Estimated: 1.4269 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Difference from expected: 1.0936 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Time coefficient:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  True: 0.1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Estimated: -2.7799 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Difference: -2.8799 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model Fit:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  R-squared: 0.935 ( 93.5 % of variance explained)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Model Comparison:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  StressSurvey only R-squared: 0.9011 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Time only R-squared: 0.563 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Multiple regression R-squared: 0.935 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ✓ Multiple regression explains more variance than either single variable model</code></pre>
+</div>
+</div>
+</section>
+<section id="multiple-regression-fit-assessment" class="level3">
+<h3 class="anchored" data-anchor-id="multiple-regression-fit-assessment">Multiple Regression Fit Assessment</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>MULTIPLE REGRESSION FIT ANALYSIS:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>================================</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>1. GOODNESS OF FIT:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   R-squared: 0.935 ( 93.5 % of variance explained)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Adjusted R-squared: 0.9242 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   ✓ Very good fit - model explains most of the variance</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+2. OVERALL MODEL SIGNIFICANCE:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   F-statistic: 86.3151 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   p-value: 7.5382e-08 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   ✓ Highly significant overall model (p &lt; 0.001)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+3. INDIVIDUAL COEFFICIENT SIGNIFICANCE:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   StressSurvey coefficient p-value: 2.6158e-06 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Time coefficient p-value: 0.027816 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   ✓ StressSurvey coefficient is statistically significant</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   ✓ Time coefficient is statistically significant</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+4. COEFFICIENT ACCURACY:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   StressSurvey coefficient bias: 1.0936 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Time coefficient bias: -2.8799 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   ⚠ Some coefficients show significant bias</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+5. KEY INSIGHTS:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   • This model includes both variables from the true relationship</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   • StressSurvey captures the main Stress effect (scaled by 1/3)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   • Time coefficient should be close to the true 0.1 value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   • This is the most complete model given the available variables</code></pre>
+</div>
+</div>
+</section>
 </section>
 </section>
 

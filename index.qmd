@@ -3,16 +3,12 @@ title: "Garbage Can Regression Challenge"
 format:
   html: default
 execute:
-  echo: true
+  echo: false
   eval: true
 ---
 
 # Garbage Can Regression Challenge
 
-**Choose R or Python and delete the other code chunk.**
-
-
-## R Code
 
 ```{r}
 #| echo: false
@@ -344,6 +340,281 @@ lines(newx_time, pred_time[,3], col = "red", lty = 2)
 dev.off()
 ```
 
-## Your Analysis
+### Time Model Fit Assessment and Commentary
 
-Follow the challenge instructions from your course to complete your analysis.
+```{r}
+#| echo: false
+# Detailed analysis of the Time regression fit
+cat("TIME MODEL FIT ANALYSIS:\n")
+cat("========================\n\n")
+
+# R-squared and adjusted R-squared
+r_squared_time <- summary(model2)$r.squared
+adj_r_squared_time <- summary(model2)$adj.r.squared
+
+cat("1. GOODNESS OF FIT:\n")
+cat("   R-squared:", round(r_squared_time, 4), "(", round(r_squared_time*100, 1), "% of variance explained)\n")
+cat("   Adjusted R-squared:", round(adj_r_squared_time, 4), "\n")
+
+if (r_squared_time > 0.8) {
+  cat("   ✓ Excellent fit - model explains most of the variance\n")
+} else if (r_squared_time > 0.6) {
+  cat("   ✓ Good fit - model explains substantial variance\n")
+} else if (r_squared_time > 0.4) {
+  cat("   ⚠ Moderate fit - model explains some variance\n")
+} else {
+  cat("   ⚠ Poor fit - model explains little variance\n")
+}
+
+# Statistical significance
+f_stat_time <- summary(model2)$fstatistic[1]
+f_pvalue_time <- pf(f_stat_time, summary(model2)$fstatistic[2], summary(model2)$fstatistic[3], lower.tail = FALSE)
+
+cat("\n2. STATISTICAL SIGNIFICANCE:\n")
+cat("   F-statistic:", round(f_stat_time, 4), "\n")
+cat("   p-value:", format.pval(f_pvalue_time), "\n")
+
+if (f_pvalue_time < 0.001) {
+  cat("   ✓ Highly significant relationship (p < 0.001)\n")
+} else if (f_pvalue_time < 0.01) {
+  cat("   ✓ Very significant relationship (p < 0.01)\n")
+} else if (f_pvalue_time < 0.05) {
+  cat("   ✓ Significant relationship (p < 0.05)\n")
+} else {
+  cat("   ⚠ Relationship not statistically significant (p ≥ 0.05)\n")
+}
+
+# Coefficient significance
+coef_pvalue_time <- summary(model2)$coefficients[2, 4]
+cat("\n3. COEFFICIENT SIGNIFICANCE:\n")
+cat("   Time coefficient p-value:", format.pval(coef_pvalue_time), "\n")
+
+if (coef_pvalue_time < 0.05) {
+  cat("   ✓ Time coefficient is statistically significant\n")
+} else {
+  cat("   ⚠ Time coefficient is not statistically significant\n")
+}
+
+# Compare with StressSurvey model
+cat("\n4. COMPARISON WITH STRESS SURVEY MODEL:\n")
+r_squared_stress <- summary(model1)$r.squared
+cat("   StressSurvey model R-squared:", round(r_squared_stress, 4), "\n")
+cat("   Time model R-squared:", round(r_squared_time, 4), "\n")
+
+if (r_squared_stress > r_squared_time) {
+  cat("   → StressSurvey explains more variance than Time alone\n")
+} else {
+  cat("   → Time explains more variance than StressSurvey alone\n")
+}
+
+# Potential issues
+cat("\n5. POTENTIAL ISSUES:\n")
+cat("   • OMITTED VARIABLE BIAS: Major issue - Stress variable is missing\n")
+cat("   • True relationship: Anxiety = Stress + 0.1 × Time\n")
+cat("   • This model only uses Time, ignoring the dominant Stress effect\n")
+cat("   • Time coefficient may be biased due to correlation with omitted Stress\n")
+cat("   • Small sample size: Only", nrow(observDF), "observations\n")
+cat("   • Limited Time variation: Time values range from", round(min(observDF$Time), 1), "to", round(max(observDF$Time), 1), "\n")
+
+# Residual analysis
+residuals_time <- resid(model2)
+cat("\n6. RESIDUAL ANALYSIS:\n")
+cat("   Mean of residuals:", round(mean(residuals_time), 6), "(should be ~0)\n")
+cat("   Standard deviation of residuals:", round(sd(residuals_time), 4), "\n")
+
+# Check for patterns in residuals
+if (abs(mean(residuals_time)) < 0.001) {
+  cat("   ✓ Residuals centered around zero\n")
+} else {
+  cat("   ⚠ Residuals not centered around zero\n")
+}
+
+# True vs estimated coefficient comparison
+true_time_coef <- 0.1
+est_time_coef <- coef(model2)[2]
+cat("\n7. COEFFICIENT ACCURACY:\n")
+cat("   True Time coefficient: 0.1\n")
+cat("   Estimated Time coefficient:", round(est_time_coef, 4), "\n")
+cat("   Bias:", round(est_time_coef - true_time_coef, 4), "\n")
+
+if (abs(est_time_coef - true_time_coef) < 0.01) {
+  cat("   ✓ Coefficient estimate is very close to true value\n")
+} else if (abs(est_time_coef - true_time_coef) < 0.05) {
+  cat("   ⚠ Coefficient estimate is somewhat biased\n")
+} else {
+  cat("   ⚠ Coefficient estimate is significantly biased\n")
+}
+```
+
+## Question 5: Multiple Regression of Anxiety on StressSurvey and Time
+
+### Multiple Regression Model
+
+```{r}
+#| echo: false
+# Fit the multiple regression model: Anxiety ~ StressSurvey + Time
+model3 <- lm(Anxiety ~ StressSurvey + Time, data = observDF)
+
+# Display the regression results
+summary(model3)
+```
+
+### Estimated Coefficients for Multiple Regression
+
+```{r}
+#| echo: false
+# Print the estimated coefficients for the multiple regression model
+cat("Estimated Coefficients (Anxiety ~ StressSurvey + Time):\n")
+cat("=====================================================\n")
+cat("Intercept (β₀):", round(coef(model3)[1], 4), "\n")
+cat("StressSurvey (β₁):", round(coef(model3)[2], 4), "\n")
+cat("Time (β₂):", round(coef(model3)[3], 4), "\n")
+cat("\nRegression Equation: Anxiety =", round(coef(model3)[1], 4), "+", round(coef(model3)[2], 4), "× StressSurvey +", round(coef(model3)[3], 4), "× Time\n")
+```
+
+### Comparison with True Relationship
+
+```{r}
+#| echo: false
+# Compare estimated coefficients with true relationship
+cat("COMPARISON: Estimated vs True Relationships (Multiple Regression)\n")
+cat("================================================================\n")
+cat("True generating equation: Anxiety = Stress + 0.1 × Time\n")
+cat("Estimated equation: Anxiety =", round(coef(model3)[1], 4), "+", round(coef(model3)[2], 4), "× StressSurvey +", round(coef(model3)[3], 4), "× Time\n\n")
+
+# True coefficients (remember StressSurvey = 3 × Stress)
+true_intercept_multiple <- 0  # In true model: Anxiety = Stress + 0.1 × Time (no intercept)
+true_slope_stress_multiple <- 1  # True coefficient for Stress
+true_slope_time_multiple <- 0.1  # True coefficient for Time
+expected_stresssurvey_coef <- 1/3  # Since StressSurvey = 3 × Stress
+
+# Estimated coefficients
+est_intercept_multiple <- coef(model3)[1]
+est_slope_stresssurvey_multiple <- coef(model3)[2]
+est_slope_time_multiple <- coef(model3)[3]
+
+cat("Coefficient Analysis:\n")
+cat("--------------------\n")
+cat("Intercept:\n")
+cat("  True (in generating model): 0\n")
+cat("  Estimated:", round(est_intercept_multiple, 4), "\n")
+cat("  Difference:", round(est_intercept_multiple - 0, 4), "\n\n")
+
+cat("StressSurvey coefficient:\n")
+cat("  Expected (1/3 of true Stress coefficient):", round(expected_stresssurvey_coef, 4), "\n")
+cat("  Estimated:", round(est_slope_stresssurvey_multiple, 4), "\n")
+cat("  Difference from expected:", round(est_slope_stresssurvey_multiple - expected_stresssurvey_coef, 4), "\n\n")
+
+cat("Time coefficient:\n")
+cat("  True: 0.1\n")
+cat("  Estimated:", round(est_slope_time_multiple, 4), "\n")
+cat("  Difference:", round(est_slope_time_multiple - 0.1, 4), "\n\n")
+
+# Model fit comparison
+r_squared_multiple <- summary(model3)$r.squared
+cat("Model Fit:\n")
+cat("  R-squared:", round(r_squared_multiple, 4), "(", round(r_squared_multiple*100, 1), "% of variance explained)\n")
+
+# Compare with single variable models
+r_squared_stress <- summary(model1)$r.squared
+r_squared_time <- summary(model2)$r.squared
+
+cat("\nModel Comparison:\n")
+cat("  StressSurvey only R-squared:", round(r_squared_stress, 4), "\n")
+cat("  Time only R-squared:", round(r_squared_time, 4), "\n")
+cat("  Multiple regression R-squared:", round(r_squared_multiple, 4), "\n")
+
+if (r_squared_multiple > max(r_squared_stress, r_squared_time)) {
+  cat("  ✓ Multiple regression explains more variance than either single variable model\n")
+} else {
+  cat("  ⚠ Multiple regression does not improve over single variable models\n")
+}
+```
+
+### Multiple Regression Fit Assessment
+
+```{r}
+#| echo: false
+# Detailed analysis of the multiple regression fit
+cat("MULTIPLE REGRESSION FIT ANALYSIS:\n")
+cat("================================\n\n")
+
+# R-squared and adjusted R-squared
+adj_r_squared_multiple <- summary(model3)$adj.r.squared
+
+cat("1. GOODNESS OF FIT:\n")
+cat("   R-squared:", round(r_squared_multiple, 4), "(", round(r_squared_multiple*100, 1), "% of variance explained)\n")
+cat("   Adjusted R-squared:", round(adj_r_squared_multiple, 4), "\n")
+
+if (r_squared_multiple > 0.95) {
+  cat("   ✓ Excellent fit - model explains almost all variance\n")
+} else if (r_squared_multiple > 0.8) {
+  cat("   ✓ Very good fit - model explains most of the variance\n")
+} else if (r_squared_multiple > 0.6) {
+  cat("   ✓ Good fit - model explains substantial variance\n")
+} else {
+  cat("   ⚠ Moderate fit - model explains some variance\n")
+}
+
+# Statistical significance
+f_stat_multiple <- summary(model3)$fstatistic[1]
+f_pvalue_multiple <- pf(f_stat_multiple, summary(model3)$fstatistic[2], summary(model3)$fstatistic[3], lower.tail = FALSE)
+
+cat("\n2. OVERALL MODEL SIGNIFICANCE:\n")
+cat("   F-statistic:", round(f_stat_multiple, 4), "\n")
+cat("   p-value:", format.pval(f_pvalue_multiple), "\n")
+
+if (f_pvalue_multiple < 0.001) {
+  cat("   ✓ Highly significant overall model (p < 0.001)\n")
+} else if (f_pvalue_multiple < 0.01) {
+  cat("   ✓ Very significant overall model (p < 0.01)\n")
+} else if (f_pvalue_multiple < 0.05) {
+  cat("   ✓ Significant overall model (p < 0.05)\n")
+} else {
+  cat("   ⚠ Overall model not statistically significant (p ≥ 0.05)\n")
+}
+
+# Individual coefficient significance
+stress_pvalue <- summary(model3)$coefficients[2, 4]
+time_pvalue <- summary(model3)$coefficients[3, 4]
+
+cat("\n3. INDIVIDUAL COEFFICIENT SIGNIFICANCE:\n")
+cat("   StressSurvey coefficient p-value:", format.pval(stress_pvalue), "\n")
+cat("   Time coefficient p-value:", format.pval(time_pvalue), "\n")
+
+if (stress_pvalue < 0.05) {
+  cat("   ✓ StressSurvey coefficient is statistically significant\n")
+} else {
+  cat("   ⚠ StressSurvey coefficient is not statistically significant\n")
+}
+
+if (time_pvalue < 0.05) {
+  cat("   ✓ Time coefficient is statistically significant\n")
+} else {
+  cat("   ⚠ Time coefficient is not statistically significant\n")
+}
+
+# Coefficient accuracy assessment
+cat("\n4. COEFFICIENT ACCURACY:\n")
+stress_bias <- est_slope_stresssurvey_multiple - expected_stresssurvey_coef
+time_bias <- est_slope_time_multiple - 0.1
+
+cat("   StressSurvey coefficient bias:", round(stress_bias, 4), "\n")
+cat("   Time coefficient bias:", round(time_bias, 4), "\n")
+
+if (abs(stress_bias) < 0.01 && abs(time_bias) < 0.01) {
+  cat("   ✓ Both coefficients are very close to expected values\n")
+} else if (abs(stress_bias) < 0.05 && abs(time_bias) < 0.05) {
+  cat("   ✓ Both coefficients are reasonably close to expected values\n")
+} else {
+  cat("   ⚠ Some coefficients show significant bias\n")
+}
+
+# Key insights
+cat("\n5. KEY INSIGHTS:\n")
+cat("   • This model includes both variables from the true relationship\n")
+cat("   • StressSurvey captures the main Stress effect (scaled by 1/3)\n")
+cat("   • Time coefficient should be close to the true 0.1 value\n")
+cat("   • This is the most complete model given the available variables\n")
+```
+
