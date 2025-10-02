@@ -23,7 +23,7 @@ if (!require(ggplot2, quietly = TRUE)) {
 }
 if (!require(broom, quietly = TRUE)) {
   install.packages("broom", repos = "https://cran.rstudio.com/")
-  library(broom)
+library(broom)
 }
 
 # Data with known true relationships: Anxiety = Stress + 0.1 × Time
@@ -64,35 +64,6 @@ cat("p-value:", format.pval(pf(summary(model1)$fstatistic[1],
                                lower.tail = FALSE)), "\n")
 ```
 
-### Scatter Plot with Regression Line
-
-```{r}
-#| echo: false
-# Create scatter plot with regression line
-# Use base R plotting (more reliable)
-plot(observDF$StressSurvey, observDF$Anxiety, 
-     main = "Bivariate Regression: Anxiety vs Stress Survey",
-     xlab = "Stress Survey", ylab = "Anxiety",
-     pch = 16, col = "blue", cex = 1.2)
-abline(model1, col = "red", lwd = 2)
-
-# Add confidence interval
-newx <- seq(min(observDF$StressSurvey), max(observDF$StressSurvey), length.out = 100)
-pred <- predict(model1, newdata = data.frame(StressSurvey = newx), interval = "confidence")
-lines(newx, pred[,2], col = "red", lty = 2)
-lines(newx, pred[,3], col = "red", lty = 2)
-
-# Save the plot
-png("anxiety_stress_regression.png", width = 800, height = 600, res = 100)
-plot(observDF$StressSurvey, observDF$Anxiety, 
-     main = "Bivariate Regression: Anxiety vs Stress Survey",
-     xlab = "Stress Survey", ylab = "Anxiety",
-     pch = 16, col = "blue", cex = 1.2)
-abline(model1, col = "red", lwd = 2)
-lines(newx, pred[,2], col = "red", lty = 2)
-lines(newx, pred[,3], col = "red", lty = 2)
-dev.off()
-```
 
 ### Reference to Saved Plot
 
@@ -155,6 +126,125 @@ cat("Note: We're comparing StressSurvey coefficient to true Stress coefficient\n
 cat("StressSurvey values are 3x larger than Stress values in this dataset\n")
 cat("So the estimated coefficient should be approximately 1/3 =", round(1/3, 4), "\n")
 cat("Actual ratio:", round(est_slope_stresssurvey, 4), "\n")
+```
+
+### Scatter Plot Analysis and Commentary
+
+```{r}
+#| echo: false
+# Create a detailed scatter plot with additional analysis
+par(mfrow = c(1, 2))
+
+# Plot 1: Original scatter plot with regression line
+plot(observDF$StressSurvey, observDF$Anxiety, 
+     main = "Anxiety vs Stress Survey\nwith Regression Line",
+     xlab = "Stress Survey", ylab = "Anxiety",
+     pch = 16, col = "blue", cex = 1.2)
+abline(model1, col = "red", lwd = 2)
+
+# Add confidence interval
+newx <- seq(min(observDF$StressSurvey), max(observDF$StressSurvey), length.out = 100)
+pred <- predict(model1, newdata = data.frame(StressSurvey = newx), interval = "confidence")
+lines(newx, pred[,2], col = "red", lty = 2)
+lines(newx, pred[,3], col = "red", lty = 2)
+
+# Plot 2: Residuals plot to check assumptions
+residuals <- resid(model1)
+plot(observDF$StressSurvey, residuals,
+     main = "Residuals vs Stress Survey\n(Checking Linearity)",
+     xlab = "Stress Survey", ylab = "Residuals",
+     pch = 16, col = "darkgreen", cex = 1.2)
+abline(h = 0, col = "red", lwd = 2)
+
+# Reset plotting parameters
+par(mfrow = c(1, 1))
+
+# Save the main scatter plot
+png("anxiety_stress_regression.png", width = 800, height = 600, res = 100)
+plot(observDF$StressSurvey, observDF$Anxiety, 
+     main = "Bivariate Regression: Anxiety vs Stress Survey",
+     xlab = "Stress Survey", ylab = "Anxiety",
+     pch = 16, col = "blue", cex = 1.2)
+abline(model1, col = "red", lwd = 2)
+lines(newx, pred[,2], col = "red", lty = 2)
+lines(newx, pred[,3], col = "red", lty = 2)
+dev.off()
+```
+
+### Fit Assessment and Commentary
+
+```{r}
+#| echo: false
+# Detailed analysis of the regression fit
+cat("REGRESSION FIT ANALYSIS:\n")
+cat("========================\n\n")
+
+# R-squared and adjusted R-squared
+r_squared <- summary(model1)$r.squared
+adj_r_squared <- summary(model1)$adj.r.squared
+
+cat("1. GOODNESS OF FIT:\n")
+cat("   R-squared:", round(r_squared, 4), "(", round(r_squared*100, 1), "% of variance explained)\n")
+cat("   Adjusted R-squared:", round(adj_r_squared, 4), "\n")
+
+if (r_squared > 0.8) {
+  cat("   ✓ Excellent fit - model explains most of the variance\n")
+} else if (r_squared > 0.6) {
+  cat("   ✓ Good fit - model explains substantial variance\n")
+} else if (r_squared > 0.4) {
+  cat("   ⚠ Moderate fit - model explains some variance\n")
+} else {
+  cat("   ⚠ Poor fit - model explains little variance\n")
+}
+
+# Statistical significance
+f_stat <- summary(model1)$fstatistic[1]
+f_pvalue <- pf(f_stat, summary(model1)$fstatistic[2], summary(model1)$fstatistic[3], lower.tail = FALSE)
+
+cat("\n2. STATISTICAL SIGNIFICANCE:\n")
+cat("   F-statistic:", round(f_stat, 4), "\n")
+cat("   p-value:", format.pval(f_pvalue), "\n")
+
+if (f_pvalue < 0.001) {
+  cat("   ✓ Highly significant relationship (p < 0.001)\n")
+} else if (f_pvalue < 0.01) {
+  cat("   ✓ Very significant relationship (p < 0.01)\n")
+} else if (f_pvalue < 0.05) {
+  cat("   ✓ Significant relationship (p < 0.05)\n")
+} else {
+  cat("   ⚠ Relationship not statistically significant (p ≥ 0.05)\n")
+}
+
+# Coefficient significance
+coef_pvalue <- summary(model1)$coefficients[2, 4]
+cat("\n3. COEFFICIENT SIGNIFICANCE:\n")
+cat("   StressSurvey coefficient p-value:", format.pval(coef_pvalue), "\n")
+
+if (coef_pvalue < 0.05) {
+  cat("   ✓ StressSurvey coefficient is statistically significant\n")
+} else {
+  cat("   ⚠ StressSurvey coefficient is not statistically significant\n")
+}
+
+# Potential issues
+cat("\n4. POTENTIAL ISSUES:\n")
+cat("   • Omitted variable bias: Time variable is missing from the model\n")
+cat("   • Variable scaling: Using StressSurvey instead of true Stress variable\n")
+cat("   • Small sample size: Only", nrow(observDF), "observations\n")
+cat("   • Perfect linear relationship: Data appears artificially generated\n")
+
+# Residual analysis
+residuals <- resid(model1)
+cat("\n5. RESIDUAL ANALYSIS:\n")
+cat("   Mean of residuals:", round(mean(residuals), 6), "(should be ~0)\n")
+cat("   Standard deviation of residuals:", round(sd(residuals), 4), "\n")
+
+# Check for patterns in residuals
+if (abs(mean(residuals)) < 0.001) {
+  cat("   ✓ Residuals centered around zero\n")
+} else {
+  cat("   ⚠ Residuals not centered around zero\n")
+}
 ```
 
 ## Your Analysis
