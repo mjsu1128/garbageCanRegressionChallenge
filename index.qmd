@@ -247,6 +247,103 @@ if (abs(mean(residuals)) < 0.001) {
 }
 ```
 
+## Question 3: Bivariate Regression of Anxiety on Time
+
+### Regression of Anxiety on Time
+
+```{r}
+#| echo: false
+# Fit the bivariate regression model: Anxiety ~ Time
+model2 <- lm(Anxiety ~ Time, data = observDF)
+
+# Display the regression results
+summary(model2)
+```
+
+### Estimated Coefficients for Time Model
+
+```{r}
+#| echo: false
+# Print the estimated coefficients for the Time model
+cat("Estimated Coefficients (Anxiety ~ Time):\n")
+cat("======================================\n")
+cat("Intercept (β₀):", round(coef(model2)[1], 4), "\n")
+cat("Time (β₁):", round(coef(model2)[2], 4), "\n")
+cat("\nRegression Equation: Anxiety =", round(coef(model2)[1], 4), "+", round(coef(model2)[2], 4), "× Time\n")
+```
+
+### Comparison with True Relationship
+
+```{r}
+#| echo: false
+# Compare estimated coefficients with true relationship
+cat("COMPARISON: Estimated vs True Relationships (Time Model)\n")
+cat("=======================================================\n")
+cat("True generating equation: Anxiety = Stress + 0.1 × Time\n")
+cat("Estimated equation: Anxiety =", round(coef(model2)[1], 4), "+", round(coef(model2)[2], 4), "× Time\n\n")
+
+# True coefficients
+true_intercept_time <- 0  # In true model: Anxiety = Stress + 0.1 × Time (no intercept)
+true_slope_time <- 0.1    # True coefficient for Time
+
+# Estimated coefficients
+est_intercept_time <- coef(model2)[1]
+est_slope_time <- coef(model2)[2]
+
+cat("Coefficient Analysis:\n")
+cat("--------------------\n")
+cat("Intercept:\n")
+cat("  True (in generating model): 0\n")
+cat("  Estimated:", round(est_intercept_time, 4), "\n")
+cat("  Difference:", round(est_intercept_time - 0, 4), "\n\n")
+
+cat("Time coefficient:\n")
+cat("  True: 0.1\n")
+cat("  Estimated:", round(est_slope_time, 4), "\n")
+cat("  Difference:", round(est_slope_time - 0.1, 4), "\n\n")
+
+# Model fit comparison
+r_squared_time <- summary(model2)$r.squared
+cat("Model Fit:\n")
+cat("  R-squared:", round(r_squared_time, 4), "(", round(r_squared_time*100, 1), "% of variance explained)\n")
+
+# Note about omitted variable bias
+cat("\nIMPORTANT NOTE:\n")
+cat("This model omits the Stress variable, which is a major component\n")
+cat("of the true relationship. This creates omitted variable bias.\n")
+cat("The Time coefficient may be biased because Stress and Time are\n")
+cat("correlated in the data generation process.\n")
+```
+
+### Scatter Plot: Anxiety vs Time
+
+```{r}
+#| echo: false
+# Create scatter plot for Anxiety vs Time
+plot(observDF$Time, observDF$Anxiety, 
+     main = "Anxiety vs Time\nwith Regression Line",
+     xlab = "Time", ylab = "Anxiety",
+     pch = 16, col = "purple", cex = 1.2)
+abline(model2, col = "red", lwd = 2)
+
+# Add confidence interval
+newx_time <- seq(min(observDF$Time), max(observDF$Time), length.out = 100)
+pred_time <- predict(model2, newdata = data.frame(Time = newx_time), interval = "confidence")
+lines(newx_time, pred_time[,2], col = "red", lty = 2)
+lines(newx_time, pred_time[,3], col = "red", lty = 2)
+
+# Save the plot
+png("anxiety_time_regression.png", width = 800, height = 600, res = 100)
+plot(observDF$Time, observDF$Anxiety, 
+     main = "Bivariate Regression: Anxiety vs Time",
+     xlab = "Time", ylab = "Anxiety",
+     pch = 16, col = "purple", cex = 1.2)
+abline(model2, col = "red", lwd = 2)
+lines(newx_time, pred_time[,2], col = "red", lty = 2)
+lines(newx_time, pred_time[,3], col = "red", lty = 2)
+dev.off()
+```
+
 ## Your Analysis
 
 Follow the challenge instructions from your course to complete your analysis.
