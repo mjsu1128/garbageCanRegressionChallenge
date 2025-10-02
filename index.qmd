@@ -16,9 +16,15 @@ execute:
 
 ```{r}
 #| echo: false
-library(tidyverse)
-library(ggplot2)
-library(broom)
+# Load required packages (install if needed)
+if (!require(ggplot2, quietly = TRUE)) {
+  install.packages("ggplot2", repos = "https://cran.rstudio.com/")
+  library(ggplot2)
+}
+if (!require(broom, quietly = TRUE)) {
+  install.packages("broom", repos = "https://cran.rstudio.com/")
+  library(broom)
+}
 
 # Data with known true relationships: Anxiety = Stress + 0.1 × Time
 observDF <- data.frame(
@@ -63,38 +69,29 @@ cat("p-value:", format.pval(pf(summary(model1)$fstatistic[1],
 ```{r}
 #| echo: false
 # Create scatter plot with regression line
-# First try with ggplot2
-if (require(ggplot2, quietly = TRUE)) {
-  p <- ggplot(observDF, aes(x = StressSurvey, y = Anxiety)) +
-    geom_point(size = 3, alpha = 0.7) +
-    geom_smooth(method = "lm", se = TRUE, color = "blue") +
-    labs(title = "Bivariate Regression: Anxiety vs Stress Survey",
-         x = "Stress Survey",
-         y = "Anxiety") +
-    theme_minimal()
-  
-  # Save the plot to file
-  ggsave("anxiety_stress_regression.png", plot = p, width = 8, height = 6, dpi = 300)
-  
-  # Display the plot
-  print(p)
-} else {
-  # Fallback to base R plotting
-  plot(observDF$StressSurvey, observDF$Anxiety, 
-       main = "Bivariate Regression: Anxiety vs Stress Survey",
-       xlab = "Stress Survey", ylab = "Anxiety",
-       pch = 16, col = "blue")
-  abline(model1, col = "red", lwd = 2)
-  
-  # Save base R plot
-  png("anxiety_stress_regression.png", width = 800, height = 600, res = 100)
-  plot(observDF$StressSurvey, observDF$Anxiety, 
-       main = "Bivariate Regression: Anxiety vs Stress Survey",
-       xlab = "Stress Survey", ylab = "Anxiety",
-       pch = 16, col = "blue")
-  abline(model1, col = "red", lwd = 2)
-  dev.off()
-}
+# Use base R plotting (more reliable)
+plot(observDF$StressSurvey, observDF$Anxiety, 
+     main = "Bivariate Regression: Anxiety vs Stress Survey",
+     xlab = "Stress Survey", ylab = "Anxiety",
+     pch = 16, col = "blue", cex = 1.2)
+abline(model1, col = "red", lwd = 2)
+
+# Add confidence interval
+newx <- seq(min(observDF$StressSurvey), max(observDF$StressSurvey), length.out = 100)
+pred <- predict(model1, newdata = data.frame(StressSurvey = newx), interval = "confidence")
+lines(newx, pred[,2], col = "red", lty = 2)
+lines(newx, pred[,3], col = "red", lty = 2)
+
+# Save the plot
+png("anxiety_stress_regression.png", width = 800, height = 600, res = 100)
+plot(observDF$StressSurvey, observDF$Anxiety, 
+     main = "Bivariate Regression: Anxiety vs Stress Survey",
+     xlab = "Stress Survey", ylab = "Anxiety",
+     pch = 16, col = "blue", cex = 1.2)
+abline(model1, col = "red", lwd = 2)
+lines(newx, pred[,2], col = "red", lty = 2)
+lines(newx, pred[,3], col = "red", lty = 2)
+dev.off()
 ```
 
 ### Reference to Saved Plot
