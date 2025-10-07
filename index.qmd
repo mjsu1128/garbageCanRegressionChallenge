@@ -32,6 +32,17 @@ print(observDF)
 
 ## Bivariate Regression Analysis
 
+---
+
+**📝 YOUR INTERPRETATION GOES HERE:**
+
+*Write your interpretation of the bivariate regression analysis here. Consider:*
+- *What does the relationship between StressSurvey and Anxiety tell us?*
+- *Is the relationship statistically significant?*
+- *How strong is the relationship?*
+
+---
+
 ### Regression of Anxiety on Stress Survey
 
 ```{python}
@@ -249,7 +260,30 @@ else:
     print("   ⚠ Residuals not centered around zero")
 ```
 
+---
+
+**📝 YOUR INTERPRETATION - Question 2:**
+
+*Based on the scatter plot and regression analysis above, write your interpretation:*
+- *How well does the regression line fit the data?*
+- *What potential issues did you identify from the residual plot?*
+- *How do the estimated coefficients compare to what you expected?*
+- *Why might the coefficients differ from the true values?*
+
+---
+
 ## Question 3: Bivariate Regression of Anxiety on Time
+
+---
+
+**📝 YOUR INTERPRETATION GOES HERE:**
+
+*Write your interpretation of the Time regression analysis here. Consider:*
+- *How does Time relate to Anxiety in this model?*
+- *Compare the R-squared value with the StressSurvey model - which explains more variance?*
+- *What does this tell you about the importance of Time vs StressSurvey?*
+
+---
 
 ### Regression of Anxiety on Time
 
@@ -452,7 +486,31 @@ else:
     print("   ⚠ Coefficient estimate is significantly biased")
 ```
 
+---
+
+**📝 YOUR INTERPRETATION - Question 3:**
+
+*Based on the Time regression analysis, write your interpretation:*
+- *How accurate is the Time coefficient compared to the true value (0.1)?*
+- *Why is the Time coefficient biased in this model?*
+- *What is the impact of omitting the Stress variable?*
+- *How does the model fit compare to the StressSurvey model?*
+
+---
+
 ## Question 5: Multiple Regression of Anxiety on StressSurvey and Time
+
+---
+
+**📝 YOUR INTERPRETATION GOES HERE:**
+
+*Write your interpretation of the multiple regression analysis here. Consider:*
+- *How do the coefficients change when both variables are included?*
+- *Does the R-squared improve compared to the single-variable models?*
+- *Are both coefficients statistically significant?*
+- *How close are the coefficients to the expected values?*
+
+---
 
 ### Multiple Regression Model
 
@@ -616,3 +674,316 @@ print("   • Time coefficient should be close to the true 0.1 value")
 print("   • This is the most complete model given the available variables")
 ```
 
+---
+
+**📝 YOUR INTERPRETATION - Question 5:**
+
+*Based on the multiple regression analysis (StressSurvey + Time), write your interpretation:*
+- *How does including both variables improve the model?*
+- *Which variable (StressSurvey or Time) has a larger effect on Anxiety?*
+- *Are the coefficients close to the expected values (StressSurvey ≈ 0.333, Time ≈ 0.1)?*
+- *What does the high R-squared tell you about the model fit?*
+- *Why is this model better than the single-variable models?*
+
+---
+
+## Multiple Regression of Anxiety on Stress and Time
+
+---
+
+**📝 YOUR INTERPRETATION GOES HERE:**
+
+*Write your interpretation of the Stress + Time regression analysis here. Consider:*
+- *This model uses the TRUE variables from the data generation process*
+- *How close are the estimated coefficients to the true values (Stress = 1.0, Time = 0.1)?*
+- *Why is this model expected to perform better than using StressSurvey?*
+
+---
+
+### Multiple Regression Model (Using Actual Stress)
+
+```{python}
+#| echo: false
+# Fit the multiple regression model: Anxiety ~ Stress + Time
+X4 = observDF[['Stress', 'Time']]
+X4_sm = sm.add_constant(X4)
+model4 = sm.OLS(y, X4_sm).fit()
+
+# Display the regression results
+print(model4.summary())
+```
+
+### Estimated Coefficients (Stress + Time Model)
+
+```{python}
+#| echo: false
+# Print the estimated coefficients for Stress + Time model
+intercept_stress = model4.params['const']
+stress_coef_true = model4.params['Stress']
+time_coef_stress = model4.params['Time']
+
+print("Estimated Coefficients (Anxiety ~ Stress + Time):")
+print("================================================")
+print(f"Intercept (β₀): {intercept_stress:.4f}")
+print(f"Stress (β₁): {stress_coef_true:.4f}")
+print(f"Time (β₂): {time_coef_stress:.4f}")
+print(f"\nRegression Equation: Anxiety = {intercept_stress:.4f} + {stress_coef_true:.4f} × Stress + {time_coef_stress:.4f} × Time")
+```
+
+### Comparison with True Relationship (Perfect Match Expected!)
+
+```{python}
+#| echo: false
+# Compare with true relationship - this should be nearly perfect!
+print("COMPARISON: Estimated vs True Relationships (Stress + Time Model)")
+print("================================================================")
+print("True generating equation: Anxiety = Stress + 0.1 × Time")
+print(f"Estimated equation: Anxiety = {intercept_stress:.4f} + {stress_coef_true:.4f} × Stress + {time_coef_stress:.4f} × Time\n")
+
+# True coefficients
+true_intercept_actual = 0
+true_stress_coef = 1.0
+true_time_coef = 0.1
+
+print("Coefficient Analysis:")
+print("--------------------")
+print("Intercept:")
+print(f"  True: 0")
+print(f"  Estimated: {intercept_stress:.4f}")
+print(f"  Difference: {intercept_stress - 0:.4f}")
+print(f"  Error: {abs(intercept_stress - 0):.6f}\n")
+
+print("Stress coefficient:")
+print(f"  True: 1.0")
+print(f"  Estimated: {stress_coef_true:.4f}")
+print(f"  Difference: {stress_coef_true - 1.0:.4f}")
+print(f"  Error: {abs(stress_coef_true - 1.0):.6f}\n")
+
+print("Time coefficient:")
+print(f"  True: 0.1")
+print(f"  Estimated: {time_coef_stress:.4f}")
+print(f"  Difference: {time_coef_stress - 0.1:.4f}")
+print(f"  Error: {abs(time_coef_stress - 0.1):.6f}\n")
+
+# Model fit
+r_squared_stress_time = model4.rsquared
+adj_r_squared_stress_time = model4.rsquared_adj
+
+print("Model Fit:")
+print(f"  R-squared: {r_squared_stress_time:.4f} ({r_squared_stress_time*100:.1f}% of variance explained)")
+print(f"  Adjusted R-squared: {adj_r_squared_stress_time:.4f}")
+
+print("\nKEY INSIGHT:")
+print("This model uses the TRUE variables from the data generation process!")
+print("The coefficients should be nearly identical to the true values:")
+print(f"  Stress coefficient should be ≈ 1.0 (actual: {stress_coef_true:.4f})")
+print(f"  Time coefficient should be ≈ 0.1 (actual: {time_coef_stress:.4f})")
+print(f"  Intercept should be ≈ 0.0 (actual: {intercept_stress:.4f})")
+```
+
+### Model Comparison: All Models Side-by-Side
+
+```{python}
+#| echo: false
+# Compare all models
+print("COMPREHENSIVE MODEL COMPARISON:")
+print("=" * 70)
+print("\nModel 1: Anxiety ~ StressSurvey")
+print(f"  R-squared: {r_squared:.4f}")
+print(f"  Coefficients: {intercept:.4f} + {stress_coef:.4f} × StressSurvey")
+
+print("\nModel 2: Anxiety ~ Time")
+print(f"  R-squared: {r_squared_time:.4f}")
+print(f"  Coefficients: {intercept_time:.4f} + {time_coef:.4f} × Time")
+
+print("\nModel 3: Anxiety ~ StressSurvey + Time")
+print(f"  R-squared: {r_squared_multiple:.4f}")
+print(f"  Coefficients: {intercept_mult:.4f} + {stress_coef_mult:.4f} × StressSurvey + {time_coef_mult:.4f} × Time")
+
+print("\nModel 4: Anxiety ~ Stress + Time (TRUE MODEL)")
+print(f"  R-squared: {r_squared_stress_time:.4f}")
+print(f"  Coefficients: {intercept_stress:.4f} + {stress_coef_true:.4f} × Stress + {time_coef_stress:.4f} × Time")
+
+print("\n" + "=" * 70)
+print("BEST MODEL: Model 4 (Anxiety ~ Stress + Time)")
+print("This model matches the true data generation process!")
+print(f"It explains {r_squared_stress_time*100:.1f}% of the variance in Anxiety")
+```
+
+---
+
+## Comparing the Two Multiple Regression Models
+
+### R-squared Comparison
+
+```{python}
+#| echo: false
+print("R-SQUARED COMPARISON:")
+print("=" * 70)
+print(f"\nModel 3 (Anxiety ~ StressSurvey + Time):")
+print(f"  R-squared = {r_squared_multiple:.4f} ({r_squared_multiple*100:.1f}% of variance explained)")
+
+print(f"\nModel 4 (Anxiety ~ Stress + Time):")
+print(f"  R-squared = {r_squared_stress_time:.4f} ({r_squared_stress_time*100:.1f}% of variance explained)")
+
+print(f"\nDifference: {abs(r_squared_stress_time - r_squared_multiple):.6f}")
+
+if abs(r_squared_stress_time - r_squared_multiple) < 0.001:
+    print("\nINTERPRETATION: The R-squared values are nearly identical between the two")
+    print("models. This makes sense because StressSurvey is simply a scaled version")
+    print("of Stress (StressSurvey = 3 × Stress). Both models capture the same")
+    print("underlying relationship and explain virtually the same amount of variance")
+    print("in Anxiety. Using the proxy variable (StressSurvey) instead of the actual")
+    print("variable (Stress) does NOT reduce the model's explanatory power.")
+else:
+    print(f"\nINTERPRETATION: Model 4 has a {'higher' if r_squared_stress_time > r_squared_multiple else 'lower'} R-squared.")
+    print("This suggests that using the actual Stress variable provides a better fit.")
+```
+
+### Coefficient Interpretation Comparison
+
+```{python}
+#| echo: false
+print("\nCOEFFICIENT COMPARISON:")
+print("=" * 70)
+
+print("\nModel 3 (StressSurvey + Time):")
+print(f"  Intercept: {intercept_mult:.4f}")
+print(f"  StressSurvey coefficient: {stress_coef_mult:.4f} (expected ≈ 0.333)")
+print(f"  Time coefficient: {time_coef_mult:.4f} (expected ≈ 0.1)")
+
+print("\nModel 4 (Stress + Time):")
+print(f"  Intercept: {intercept_stress:.4f}")
+print(f"  Stress coefficient: {stress_coef_true:.4f} (expected = 1.0)")
+print(f"  Time coefficient: {time_coef_stress:.4f} (expected = 0.1)")
+
+print("\nTime Coefficient Comparison:")
+print(f"  Model 3 Time coefficient: {time_coef_mult:.4f}")
+print(f"  Model 4 Time coefficient: {time_coef_stress:.4f}")
+print(f"  Difference: {abs(time_coef_mult - time_coef_stress):.6f}")
+
+print("\nINTERPRETATION:")
+print("The Time coefficients are nearly identical in both models, which is expected")
+print("because Time is the same variable in both regressions. Model 4's coefficients")
+print("are closer to the true values because it uses the actual Stress variable.")
+print(f"The Stress coefficient ({stress_coef_true:.4f}) in Model 4 is very close to")
+print(f"the true value of 1.0, while the StressSurvey coefficient ({stress_coef_mult:.4f})")
+print(f"in Model 3 is close to 1/3 ≈ 0.333, which is the expected scaling factor.")
+```
+
+### Statistical Significance Analysis
+
+```{python}
+#| echo: false
+print("\nSTATISTICAL SIGNIFICANCE ANALYSIS:")
+print("=" * 70)
+
+# Model 3 significance
+stress_pval_m3 = model3.pvalues['StressSurvey']
+time_pval_m3 = model3.pvalues['Time']
+
+print("\nModel 3 (StressSurvey + Time):")
+print(f"  StressSurvey coefficient p-value: {stress_pval_m3:.6f}")
+print(f"    {'✓ Statistically significant (p < 0.05)' if stress_pval_m3 < 0.05 else '✗ NOT statistically significant (p ≥ 0.05)'}")
+print(f"  Time coefficient p-value: {time_pval_m3:.6f}")
+print(f"    {'✓ Statistically significant (p < 0.05)' if time_pval_m3 < 0.05 else '✗ NOT statistically significant (p ≥ 0.05)'}")
+
+both_sig_m3 = (stress_pval_m3 < 0.05) and (time_pval_m3 < 0.05)
+print(f"\n  Both coefficients significant? {'YES ✓' if both_sig_m3 else 'NO ✗'}")
+
+# Model 4 significance
+stress_pval_m4 = model4.pvalues['Stress']
+time_pval_m4 = model4.pvalues['Time']
+
+print("\nModel 4 (Stress + Time):")
+print(f"  Stress coefficient p-value: {stress_pval_m4:.6f}")
+print(f"    {'✓ Statistically significant (p < 0.05)' if stress_pval_m4 < 0.05 else '✗ NOT statistically significant (p ≥ 0.05)'}")
+print(f"  Time coefficient p-value: {time_pval_m4:.6f}")
+print(f"    {'✓ Statistically significant (p < 0.05)' if time_pval_m4 < 0.05 else '✗ NOT statistically significant (p ≥ 0.05)'}")
+
+both_sig_m4 = (stress_pval_m4 < 0.05) and (time_pval_m4 < 0.05)
+print(f"\n  Both coefficients significant? {'YES ✓' if both_sig_m4 else 'NO ✗'}")
+
+print("\n" + "=" * 70)
+print("INTERPRETATION:")
+
+if both_sig_m3 and both_sig_m4:
+    print("\nBoth models show statistical significance in ALL coefficient estimates.")
+    print("This indicates that both StressSurvey/Stress and Time contribute")
+    print("significantly to explaining variation in Anxiety. The high significance")
+    print("in both models demonstrates that:")
+    print("  • The relationships are strong and reliable")
+    print("  • We can be confident these variables matter for predicting Anxiety")
+    print("  • The sample size, while small (n=15), is sufficient to detect these effects")
+elif both_sig_m3 and not both_sig_m4:
+    print("\nModel 3 shows significance in all coefficients, but Model 4 does not.")
+    if time_pval_m4 >= 0.05:
+        print("The Time coefficient in Model 4 is NOT significant. This could indicate")
+        print("multicollinearity or that the small sample size limits precision.")
+elif not both_sig_m3 and both_sig_m4:
+    print("\nModel 4 shows significance in all coefficients, but Model 3 does not.")
+    if time_pval_m3 >= 0.05:
+        print("The Time coefficient in Model 3 is NOT significant, likely because")
+        print("StressSurvey captures most of the variance, leaving little for Time.")
+else:
+    print("\nNeither model shows significance in all coefficients.")
+    print("This suggests potential issues with multicollinearity or sample size.")
+```
+
+### Real-World Implications
+
+```{python}
+#| echo: false
+print("\nREAL-WORLD IMPLICATIONS OF MULTIPLE REGRESSION:")
+print("=" * 70)
+
+print("\n1. VARIABLE SELECTION:")
+print("   When using a proxy variable (StressSurvey) instead of the actual variable")
+print("   (Stress), the model can still have excellent fit and statistical significance.")
+print(f"   Both models have R-squared ≈ {r_squared_multiple:.4f}, showing that proxy")
+print("   variables can work well IF they have a consistent relationship with the")
+print("   true variable. However, coefficient interpretation changes - you must")
+print("   account for the scaling factor (3x in this case).")
+
+print("\n2. MODEL SPECIFICATION:")
+print("   Including both relevant variables (Stress/StressSurvey AND Time) is crucial.")
+print(f"   The multiple regression R-squared ({r_squared_multiple:.4f}) is much higher")
+print(f"   than the single-variable models (StressSurvey only: {r_squared:.4f},")
+print(f"   Time only: {r_squared_time:.4f}). This demonstrates that omitting important")
+print("   variables leads to biased coefficients and reduced explanatory power.")
+
+print("\n3. STATISTICAL vs PRACTICAL SIGNIFICANCE:")
+print("   A model can have high statistical significance but still use suboptimal")
+print("   variables. Both models are highly significant, but Model 4 uses the TRUE")
+print("   variables from the data generation process. In real research, you often")
+print("   don't know the 'true' model, so you must:")
+print("     • Use theory to guide variable selection")
+print("     • Test alternative specifications")
+print("     • Be cautious about causal interpretations")
+
+print("\n4. RESEARCH PRACTICE IMPLICATIONS:")
+print("   This exercise demonstrates several critical lessons:")
+print("     • Omitted variable bias is real: Single-variable models gave biased")
+print("       coefficient estimates")
+print("     • Proxy variables can work: StressSurvey performed well despite not")
+print("       being the 'true' variable")
+print("     • Always check significance: Not all variables in a model may be")
+print("       statistically significant")
+print("     • R-squared isn't everything: Both multiple regression models had high")
+print("       R-squared, but Model 4 better captures the true relationship")
+print("     • Understanding the DGP matters: Knowing how data was generated helps")
+print("       evaluate model quality - a luxury we don't have in real research!")
+```
+
+---
+
+**📝 FINAL INTERPRETATION - Model Comparison:**
+
+*Based on all four regression models, write your final interpretation:*
+- *Which model performed best and why?*
+- *How did Model 4 (Stress + Time) compare to Model 3 (StressSurvey + Time)?*
+- *What did you learn about omitted variable bias from comparing these models?*
+- *What did you learn about using proxy variables (StressSurvey vs Stress)?*
+- *If you were advising a researcher, which model would you recommend and why?*
+
+---
