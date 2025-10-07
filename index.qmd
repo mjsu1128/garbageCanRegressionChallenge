@@ -198,10 +198,13 @@ else:
 
 **SCATTER PLOT INTERPRETATION:**
 
-The scatter plot shows that Anxiety rises in a fairly straight line as StressSurvey increases, and the regression line fits the points very closely. Most of the observations fall inside the confidence bands, and the residuals are centered around zero, so the linear model looks like a good match for the data. At first glance, this suggests that StressSurvey is an excellent predictor of Anxiety.
+The scatter plot shows a strong linear relationship between StressSurvey and Anxiety with a high R^2 value. Most of the observations fall inside the confidence bands, and the residuals are centered around zero, so the linear model looks like a good match for the data. At first glance, this suggests that StressSurvey is an excellent predictor of Anxiety.
 
-However, upon further examination there are some potential issues. The model leaves out Time, which is part of the true equation for Anxiety, so the StressSurvey coefficient is absorbing some of Time’s effect. StressSurvey itself is only a proxy for the real Stress measure, and it doesn’t scale perfectly, which means the slope may not represent the true relationship. Even though the R² value is very high, that alone doesn’t prove the coefficients are correct.
+However, upon further examination there are some potential issues. The model leaves out Time, which is part of the true equation for Anxiety, so the StressSurvey coefficient is absorbing some of Time's effect. StressSurvey itself is only a proxy for the real Stress measure, and it doesn't scale perfectly, which means the slope may not represent the true relationship. Even though the R² value is very high, that alone doesn't prove the coefficients are correct.
 
+---
+
+## Question 3: Bivariate Regression of Anxiety on Time
 
 ### Regression of Anxiety on Time
 
@@ -231,44 +234,13 @@ print(f"Time (β₁): {time_coef:.4f}")
 print(f"\nRegression Equation: Anxiety = {intercept_time:.4f} + {time_coef:.4f} × Time")
 ```
 
-### Comparison with True Relationship
+---
 
-```{python}
-#| echo: false
-# Compare estimated coefficients with true relationship
-print("COMPARISON: Estimated vs True Relationships (Time Model)")
-print("=======================================================")
-print("True generating equation: Anxiety = Stress + 0.1 × Time")
-print(f"Estimated equation: Anxiety = {intercept_time:.4f} + {time_coef:.4f} × Time\n")
+**INTERPRETATION:**
 
-# True coefficients
-true_intercept_time = 0  # In true model: Anxiety = Stress + 0.1 × Time (no intercept)
-true_slope_time = 0.1    # True coefficient for Time
+The regression using Time produces the equation Anxiety = –3.68 + 5.34 × Time. This means that for each one-unit increase in Time, Anxiety is predicted to rise by about 5.34 units. The intercept of –3.68 suggests that if Time were zero, Anxiety would be negative, which isn’t realistic but reflects how the line was adjusted to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is far too large. The true effect of Time is only 0.1, but because Stress and Time rise together in this dataset, the regression gives Time credit for Stress’s much stronger effect. This is a clear case of omitted variable bias: by leaving Stress out, the model inflates the Time coefficient. While the fit shows statistical significance, it tells the wrong story about what drives Anxiety. In practice, the model looks convincing but is misleading because it exaggerates Time’s role and ignores the real driver.
 
-print("Coefficient Analysis:")
-print("--------------------")
-print("Intercept:")
-print(f"  True (in generating model): 0")
-print(f"  Estimated: {intercept_time:.4f}")
-print(f"  Difference: {intercept_time - 0:.4f}\n")
-
-print("Time coefficient:")
-print(f"  True: 0.1")
-print(f"  Estimated: {time_coef:.4f}")
-print(f"  Difference: {time_coef - 0.1:.4f}\n")
-
-# Model fit comparison
-r_squared_time = model2.rsquared
-print("Model Fit:")
-print(f"  R-squared: {r_squared_time:.4f} ({r_squared_time*100:.1f}% of variance explained)")
-
-# Note about omitted variable bias
-print("\nIMPORTANT NOTE:")
-print("This model omits the Stress variable, which is a major component")
-print("of the true relationship. This creates omitted variable bias.")
-print("The Time coefficient may be biased because Stress and Time are")
-print("correlated in the data generation process.")
-```
+---
 
 ### Scatter Plot: Anxiety vs Time
 
@@ -317,6 +289,7 @@ print("TIME MODEL FIT ANALYSIS:")
 print("========================\n")
 
 # R-squared and adjusted R-squared
+r_squared_time = model2.rsquared
 adj_r_squared_time = model2.rsquared_adj
 
 print("1. GOODNESS OF FIT:")
@@ -406,13 +379,13 @@ else:
 
 ---
 
-**📝 YOUR INTERPRETATION - Question 3:**
+**SCATTER PLOT INTERPRETATION:**
 
-*Based on the Time regression analysis, write your interpretation:*
-- *How accurate is the Time coefficient compared to the true value (0.1)?*
-- *Why is the Time coefficient biased in this model?*
-- *What is the impact of omitting the Stress variable?*
-- *How does the model fit compare to the StressSurvey model?*
+The scatter plot shows a strong linear relationship between Time and Anxiety with a high R^2 value. Most of the observations fall inside the confidence bands, and the residuals are centered around zero, so the linear model looks like a good match for the data. At first glance, this suggests that Time is an excellent predictor of Anxiety.
+
+However, upon further examination there are some potential issues. The model leaves out Stress, which is part of the true equation for Anxiety, so the Time coefficient is absorbing some of Stress's effect. Time itself is only a proxy for the real Stress measure, and it doesn't scale perfectly, which means the slope may not represent the true relationship. Even though the R² value is very high, that alone doesn't prove the coefficients are correct.
+
+Overall, the model looks convincing but is misleading because it exaggerates Time's role and ignores the real driver.
 
 ---
 
