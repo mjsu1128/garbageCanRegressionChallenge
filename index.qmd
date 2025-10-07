@@ -30,19 +30,6 @@ observDF = pd.DataFrame(data)
 print(observDF)
 ```
 
-## Bivariate Regression Analysis
-
----
-
-**📝 YOUR INTERPRETATION GOES HERE:**
-
-*Write your interpretation of the bivariate regression analysis here. Consider:*
-- *What does the relationship between StressSurvey and Anxiety tell us?*
-- *Is the relationship statistically significant?*
-- *How strong is the relationship?*
-
----
-
 ### Regression of Anxiety on Stress Survey
 
 ```{python}
@@ -58,7 +45,6 @@ model1 = sm.OLS(y, X1_sm).fit()
 # Display the regression results
 print(model1.summary())
 ```
-
 
 
 ### Estimated Coefficients
@@ -210,28 +196,12 @@ else:
 
 ---
 
-**📝 YOUR INTERPRETATION - Question 2:**
+**SCATTER PLOT INTERPRETATION:**
 
-*Based on the scatter plot and regression analysis above, write your interpretation:*
-- *How well does the regression line fit the data?*
-- *What potential issues did you identify from the residual plot?*
-- *How do the estimated coefficients compare to what you expected?*
-- *Why might the coefficients differ from the true values?*
+The scatter plot shows that Anxiety rises in a fairly straight line as StressSurvey increases, and the regression line fits the points very closely. Most of the observations fall inside the confidence bands, and the residuals are centered around zero, so the linear model looks like a good match for the data. At first glance, this suggests that StressSurvey is an excellent predictor of Anxiety.
 
----
+However, upon further examination there are some potential issues. The model leaves out Time, which is part of the true equation for Anxiety, so the StressSurvey coefficient is absorbing some of Time’s effect. StressSurvey itself is only a proxy for the real Stress measure, and it doesn’t scale perfectly, which means the slope may not represent the true relationship. Even though the R² value is very high, that alone doesn’t prove the coefficients are correct.
 
-## Question 3: Bivariate Regression of Anxiety on Time
-
----
-
-**📝 YOUR INTERPRETATION GOES HERE:**
-
-*Write your interpretation of the Time regression analysis here. Consider:*
-- *How does Time relate to Anxiety in this model?*
-- *Compare the R-squared value with the StressSurvey model - which explains more variance?*
-- *What does this tell you about the importance of Time vs StressSurvey?*
-
----
 
 ### Regression of Anxiety on Time
 
