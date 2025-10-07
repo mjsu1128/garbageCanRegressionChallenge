@@ -7,614 +7,612 @@ execute:
   eval: true
 ---
 
-# Garbage Can Regression Challenge
-
-
-```{r}
+```{python}
 #| echo: false
-# Load required packages (install if needed)
-if (!require(ggplot2, quietly = TRUE)) {
-  suppressMessages(install.packages("ggplot2", repos = "https://cran.rstudio.com/", quiet = TRUE))
-  library(ggplot2)
-}
-if (!require(broom, quietly = TRUE)) {
-  suppressMessages(install.packages("broom", repos = "https://cran.rstudio.com/", quiet = TRUE))
-  library(broom)
-}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+import statsmodels.api as sm
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 # Data with known true relationships: Anxiety = Stress + 0.1 × Time
-observDF <- data.frame(
-  Stress = c(0,0,0,1,1,1,2,2,2,8,8,8,12,12,12),
-  StressSurvey = c(0,0,0,3,3,3,6,6,6,9,9,9,12,12,12),
-  Time = c(0,1,1,1,1,1,2,2,2,2,2,2.1,2.2,2.2,2.2),
-  Anxiety = c(0,0.1,0.1,1.1,1.1,1.1,2.2,2.2,2.2,8.2,8.2,8.21,12.22,12.22,12.22)
-)
+data = {
+    'Stress': [0,0,0,1,1,1,2,2,2,8,8,8,12,12,12],
+    'StressSurvey': [0,0,0,3,3,3,6,6,6,9,9,9,12,12,12],
+    'Time': [0,1,1,1,1,1,2,2,2,2,2,2.1,2.2,2.2,2.2],
+    'Anxiety': [0,0.1,0.1,1.1,1.1,1.1,2.2,2.2,2.2,8.2,8.2,8.21,12.22,12.22,12.22]
+}
 
-observDF
+observDF = pd.DataFrame(data)
+print(observDF)
 ```
 
 ## Bivariate Regression Analysis
 
 ### Regression of Anxiety on Stress Survey
 
-```{r}
+```{python}
 #| echo: false
 # Fit the bivariate regression model
-model1 <- lm(Anxiety ~ StressSurvey, data = observDF)
+X1 = observDF[['StressSurvey']]
+y = observDF['Anxiety']
+
+# Using statsmodels for detailed output
+X1_sm = sm.add_constant(X1)
+model1 = sm.OLS(y, X1_sm).fit()
 
 # Display the regression results
-summary(model1)
+print(model1.summary())
 ```
 
 ### Regression Output Interpretation
 
-```{r}
+```{python}
 #| echo: false
 # Extract key statistics
-cat("R-squared:", round(summary(model1)$r.squared, 4), "\n")
-cat("Adjusted R-squared:", round(summary(model1)$adj.r.squared, 4), "\n")
-cat("F-statistic:", round(summary(model1)$fstatistic[1], 4), "\n")
-cat("p-value:", format.pval(pf(summary(model1)$fstatistic[1], 
-                               summary(model1)$fstatistic[2], 
-                               summary(model1)$fstatistic[3], 
-                               lower.tail = FALSE)), "\n")
+print(f"R-squared: {model1.rsquared:.4f}")
+print(f"Adjusted R-squared: {model1.rsquared_adj:.4f}")
+print(f"F-statistic: {model1.fvalue:.4f}")
+print(f"p-value: {model1.f_pvalue:.6f}")
 ```
 
 
 ### Reference to Saved Plot
 
-```{r}
+```{python}
 #| echo: false
 # Check if the plot file exists and display information about it
-if (file.exists("anxiety_stress_regression.png")) {
-  cat("✓ Plot successfully saved as: anxiety_stress_regression.png\n")
-  cat("File size:", round(file.size("anxiety_stress_regression.png") / 1024, 2), "KB\n")
-  cat("Full path:", normalizePath("anxiety_stress_regression.png"), "\n")
-} else {
-  cat("⚠ Plot file not found. Please run the plotting code above first.\n")
-}
+import os
+
+if os.path.exists("anxiety_stress_regression.png"):
+    file_size = os.path.getsize("anxiety_stress_regression.png") / 1024
+    print(f"✓ Plot successfully saved as: anxiety_stress_regression.png")
+    print(f"File size: {file_size:.2f} KB")
+    print(f"Full path: {os.path.abspath('anxiety_stress_regression.png')}")
+else:
+    print("⚠ Plot file not found. Please run the plotting code above first.")
 ```
 
 ### Estimated Coefficients
 
-```{r}
+```{python}
 #| echo: false
 # Print the estimated coefficients
-cat("Estimated Coefficients:\n")
-cat("Intercept (β₀):", round(coef(model1)[1], 4), "\n")
-cat("StressSurvey (β₁):", round(coef(model1)[2], 4), "\n")
-cat("\nRegression Equation: Anxiety =", round(coef(model1)[1], 4), "+", round(coef(model1)[2], 4), "× StressSurvey\n")
+intercept = model1.params['const']
+stress_coef = model1.params['StressSurvey']
+
+print("Estimated Coefficients:")
+print(f"Intercept (β₀): {intercept:.4f}")
+print(f"StressSurvey (β₁): {stress_coef:.4f}")
+print(f"\nRegression Equation: Anxiety = {intercept:.4f} + {stress_coef:.4f} × StressSurvey")
 ```
 
 ### Comparison with True Relationships
 
-```{r}
+```{python}
 #| echo: false
 # True relationship from the data generation: Anxiety = Stress + 0.1 × Time
 # But we're regressing Anxiety on StressSurvey, not Stress
 
 # Extract true coefficients for comparison
-true_intercept <- 0  # In the true model: Anxiety = Stress + 0.1 × Time (no intercept)
-true_slope_stress <- 1  # True coefficient for Stress in the generating equation
+true_intercept = 0  # In the true model: Anxiety = Stress + 0.1 × Time (no intercept)
+true_slope_stress = 1  # True coefficient for Stress in the generating equation
 
-# Get estimated coefficients
-est_intercept <- coef(model1)[1]
-est_slope_stresssurvey <- coef(model1)[2]
+print("COMPARISON: Estimated vs True Relationships")
+print("==========================================")
+print("True generating equation: Anxiety = Stress + 0.1 × Time")
+print(f"Estimated equation: Anxiety = {intercept:.4f} + {stress_coef:.4f} × StressSurvey\n")
 
-cat("COMPARISON: Estimated vs True Relationships\n")
-cat("==========================================\n")
-cat("True generating equation: Anxiety = Stress + 0.1 × Time\n")
-cat("Estimated equation: Anxiety =", round(est_intercept, 4), "+", round(est_slope_stresssurvey, 4), "× StressSurvey\n\n")
+print("Coefficient Analysis:")
+print("--------------------")
+print("Intercept:")
+print(f"  True (in generating model): 0")
+print(f"  Estimated: {intercept:.4f}")
+print(f"  Difference: {intercept - 0:.4f}\n")
 
-cat("Coefficient Analysis:\n")
-cat("--------------------\n")
-cat("Intercept:\n")
-cat("  True (in generating model): 0\n")
-cat("  Estimated:", round(est_intercept, 4), "\n")
-cat("  Difference:", round(est_intercept - 0, 4), "\n\n")
+print("Slope coefficient:")
+print(f"  True (Stress coefficient): 1.0")
+print(f"  Estimated (StressSurvey): {stress_coef:.4f}")
+print(f"  Difference: {stress_coef - 1.0:.4f}\n")
 
-cat("Slope coefficient:\n")
-cat("  True (Stress coefficient): 1.0\n")
-cat("  Estimated (StressSurvey):", round(est_slope_stresssurvey, 4), "\n")
-cat("  Difference:", round(est_slope_stresssurvey - 1.0, 4), "\n\n")
-
-cat("Note: We're comparing StressSurvey coefficient to true Stress coefficient\n")
-cat("StressSurvey values are 3x larger than Stress values in this dataset\n")
-cat("So the estimated coefficient should be approximately 1/3 =", round(1/3, 4), "\n")
-cat("Actual ratio:", round(est_slope_stresssurvey, 4), "\n")
+print("Note: We're comparing StressSurvey coefficient to true Stress coefficient")
+print("StressSurvey values are 3x larger than Stress values in this dataset")
+print(f"So the estimated coefficient should be approximately 1/3 = {1/3:.4f}")
+print(f"Actual ratio: {stress_coef:.4f}")
 ```
 
 ### Scatter Plot Analysis and Commentary
 
-```{r}
+```{python}
 #| echo: false
+import matplotlib.pyplot as plt
+from scipy import stats
+
 # Create a detailed scatter plot with additional analysis
-par(mfrow = c(1, 2))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
 # Plot 1: Original scatter plot with regression line
-plot(observDF$StressSurvey, observDF$Anxiety, 
-     main = "Anxiety vs Stress Survey\nwith Regression Line",
-     xlab = "Stress Survey", ylab = "Anxiety",
-     pch = 16, col = "blue", cex = 1.2)
-abline(model1, col = "red", lwd = 2)
+ax1.scatter(observDF['StressSurvey'], observDF['Anxiety'], color='blue', s=80, alpha=0.7)
+ax1.plot(observDF['StressSurvey'], model1.fittedvalues, color='red', linewidth=2, label='Regression Line')
 
 # Add confidence interval
-newx <- seq(min(observDF$StressSurvey), max(observDF$StressSurvey), length.out = 100)
-pred <- predict(model1, newdata = data.frame(StressSurvey = newx), interval = "confidence")
-lines(newx, pred[,2], col = "red", lty = 2)
-lines(newx, pred[,3], col = "red", lty = 2)
+newx = np.linspace(observDF['StressSurvey'].min(), observDF['StressSurvey'].max(), 100)
+newx_df = pd.DataFrame({'const': 1, 'StressSurvey': newx})
+pred = model1.get_prediction(newx_df)
+pred_summary = pred.summary_frame(alpha=0.05)
+ax1.plot(newx, pred_summary['mean_ci_lower'], 'r--', linewidth=1, label='95% CI')
+ax1.plot(newx, pred_summary['mean_ci_upper'], 'r--', linewidth=1)
+ax1.set_xlabel('Stress Survey')
+ax1.set_ylabel('Anxiety')
+ax1.set_title('Anxiety vs Stress Survey\nwith Regression Line')
+ax1.legend()
+ax1.grid(True, alpha=0.3)
 
 # Plot 2: Residuals plot to check assumptions
-residuals <- resid(model1)
-plot(observDF$StressSurvey, residuals,
-     main = "Residuals vs Stress Survey\n(Checking Linearity)",
-     xlab = "Stress Survey", ylab = "Residuals",
-     pch = 16, col = "darkgreen", cex = 1.2)
-abline(h = 0, col = "red", lwd = 2)
+residuals = model1.resid
+ax2.scatter(observDF['StressSurvey'], residuals, color='darkgreen', s=80, alpha=0.7)
+ax2.axhline(y=0, color='red', linewidth=2)
+ax2.set_xlabel('Stress Survey')
+ax2.set_ylabel('Residuals')
+ax2.set_title('Residuals vs Stress Survey\n(Checking Linearity)')
+ax2.grid(True, alpha=0.3)
 
-# Reset plotting parameters
-par(mfrow = c(1, 1))
+plt.tight_layout()
+plt.show()
 
 # Save the main scatter plot
-png("anxiety_stress_regression.png", width = 800, height = 600, res = 100)
-plot(observDF$StressSurvey, observDF$Anxiety, 
-     main = "Bivariate Regression: Anxiety vs Stress Survey",
-     xlab = "Stress Survey", ylab = "Anxiety",
-     pch = 16, col = "blue", cex = 1.2)
-abline(model1, col = "red", lwd = 2)
-lines(newx, pred[,2], col = "red", lty = 2)
-lines(newx, pred[,3], col = "red", lty = 2)
-dev.off()
+fig2, ax = plt.subplots(figsize=(8, 6))
+ax.scatter(observDF['StressSurvey'], observDF['Anxiety'], color='blue', s=80, alpha=0.7)
+ax.plot(observDF['StressSurvey'], model1.fittedvalues, color='red', linewidth=2)
+ax.plot(newx, pred_summary['mean_ci_lower'], 'r--', linewidth=1)
+ax.plot(newx, pred_summary['mean_ci_upper'], 'r--', linewidth=1)
+ax.set_xlabel('Stress Survey')
+ax.set_ylabel('Anxiety')
+ax.set_title('Bivariate Regression: Anxiety vs Stress Survey')
+ax.grid(True, alpha=0.3)
+plt.savefig('anxiety_stress_regression.png', dpi=100, bbox_inches='tight')
+plt.close()
 ```
 
 ### Fit Assessment and Commentary
 
-```{r}
+```{python}
 #| echo: false
 # Detailed analysis of the regression fit
-cat("REGRESSION FIT ANALYSIS:\n")
-cat("========================\n\n")
+print("REGRESSION FIT ANALYSIS:")
+print("========================\n")
 
 # R-squared and adjusted R-squared
-r_squared <- summary(model1)$r.squared
-adj_r_squared <- summary(model1)$adj.r.squared
+r_squared = model1.rsquared
+adj_r_squared = model1.rsquared_adj
 
-cat("1. GOODNESS OF FIT:\n")
-cat("   R-squared:", round(r_squared, 4), "(", round(r_squared*100, 1), "% of variance explained)\n")
-cat("   Adjusted R-squared:", round(adj_r_squared, 4), "\n")
+print("1. GOODNESS OF FIT:")
+print(f"   R-squared: {r_squared:.4f} ({r_squared*100:.1f}% of variance explained)")
+print(f"   Adjusted R-squared: {adj_r_squared:.4f}")
 
-if (r_squared > 0.8) {
-  cat("   ✓ Excellent fit - model explains most of the variance\n")
-} else if (r_squared > 0.6) {
-  cat("   ✓ Good fit - model explains substantial variance\n")
-} else if (r_squared > 0.4) {
-  cat("   ⚠ Moderate fit - model explains some variance\n")
-} else {
-  cat("   ⚠ Poor fit - model explains little variance\n")
-}
+if r_squared > 0.8:
+    print("   ✓ Excellent fit - model explains most of the variance")
+elif r_squared > 0.6:
+    print("   ✓ Good fit - model explains substantial variance")
+elif r_squared > 0.4:
+    print("   ⚠ Moderate fit - model explains some variance")
+else:
+    print("   ⚠ Poor fit - model explains little variance")
 
 # Statistical significance
-f_stat <- summary(model1)$fstatistic[1]
-f_pvalue <- pf(f_stat, summary(model1)$fstatistic[2], summary(model1)$fstatistic[3], lower.tail = FALSE)
+f_stat = model1.fvalue
+f_pvalue = model1.f_pvalue
 
-cat("\n2. STATISTICAL SIGNIFICANCE:\n")
-cat("   F-statistic:", round(f_stat, 4), "\n")
-cat("   p-value:", format.pval(f_pvalue), "\n")
+print("\n2. STATISTICAL SIGNIFICANCE:")
+print(f"   F-statistic: {f_stat:.4f}")
+print(f"   p-value: {f_pvalue:.6f}")
 
-if (f_pvalue < 0.001) {
-  cat("   ✓ Highly significant relationship (p < 0.001)\n")
-} else if (f_pvalue < 0.01) {
-  cat("   ✓ Very significant relationship (p < 0.01)\n")
-} else if (f_pvalue < 0.05) {
-  cat("   ✓ Significant relationship (p < 0.05)\n")
-} else {
-  cat("   ⚠ Relationship not statistically significant (p ≥ 0.05)\n")
-}
+if f_pvalue < 0.001:
+    print("   ✓ Highly significant relationship (p < 0.001)")
+elif f_pvalue < 0.01:
+    print("   ✓ Very significant relationship (p < 0.01)")
+elif f_pvalue < 0.05:
+    print("   ✓ Significant relationship (p < 0.05)")
+else:
+    print("   ⚠ Relationship not statistically significant (p ≥ 0.05)")
 
 # Coefficient significance
-coef_pvalue <- summary(model1)$coefficients[2, 4]
-cat("\n3. COEFFICIENT SIGNIFICANCE:\n")
-cat("   StressSurvey coefficient p-value:", format.pval(coef_pvalue), "\n")
+coef_pvalue = model1.pvalues['StressSurvey']
+print("\n3. COEFFICIENT SIGNIFICANCE:")
+print(f"   StressSurvey coefficient p-value: {coef_pvalue:.6f}")
 
-if (coef_pvalue < 0.05) {
-  cat("   ✓ StressSurvey coefficient is statistically significant\n")
-} else {
-  cat("   ⚠ StressSurvey coefficient is not statistically significant\n")
-}
+if coef_pvalue < 0.05:
+    print("   ✓ StressSurvey coefficient is statistically significant")
+else:
+    print("   ⚠ StressSurvey coefficient is not statistically significant")
 
 # Potential issues
-cat("\n4. POTENTIAL ISSUES:\n")
-cat("   • Omitted variable bias: Time variable is missing from the model\n")
-cat("   • Variable scaling: Using StressSurvey instead of true Stress variable\n")
-cat("   • Small sample size: Only", nrow(observDF), "observations\n")
-cat("   • Perfect linear relationship: Data appears artificially generated\n")
+print("\n4. POTENTIAL ISSUES:")
+print("   • Omitted variable bias: Time variable is missing from the model")
+print("   • Variable scaling: Using StressSurvey instead of true Stress variable")
+print(f"   • Small sample size: Only {len(observDF)} observations")
+print("   • Perfect linear relationship: Data appears artificially generated")
 
 # Residual analysis
-residuals <- resid(model1)
-cat("\n5. RESIDUAL ANALYSIS:\n")
-cat("   Mean of residuals:", round(mean(residuals), 6), "(should be ~0)\n")
-cat("   Standard deviation of residuals:", round(sd(residuals), 4), "\n")
+residuals = model1.resid
+print("\n5. RESIDUAL ANALYSIS:")
+print(f"   Mean of residuals: {residuals.mean():.6f} (should be ~0)")
+print(f"   Standard deviation of residuals: {residuals.std():.4f}")
 
 # Check for patterns in residuals
-if (abs(mean(residuals)) < 0.001) {
-  cat("   ✓ Residuals centered around zero\n")
-} else {
-  cat("   ⚠ Residuals not centered around zero\n")
-}
+if abs(residuals.mean()) < 0.001:
+    print("   ✓ Residuals centered around zero")
+else:
+    print("   ⚠ Residuals not centered around zero")
 ```
 
 ## Question 3: Bivariate Regression of Anxiety on Time
 
 ### Regression of Anxiety on Time
 
-```{r}
+```{python}
 #| echo: false
 # Fit the bivariate regression model: Anxiety ~ Time
-model2 <- lm(Anxiety ~ Time, data = observDF)
+X2 = observDF[['Time']]
+X2_sm = sm.add_constant(X2)
+model2 = sm.OLS(y, X2_sm).fit()
 
 # Display the regression results
-summary(model2)
+print(model2.summary())
 ```
 
 ### Estimated Coefficients for Time Model
 
-```{r}
+```{python}
 #| echo: false
 # Print the estimated coefficients for the Time model
-cat("Estimated Coefficients (Anxiety ~ Time):\n")
-cat("======================================\n")
-cat("Intercept (β₀):", round(coef(model2)[1], 4), "\n")
-cat("Time (β₁):", round(coef(model2)[2], 4), "\n")
-cat("\nRegression Equation: Anxiety =", round(coef(model2)[1], 4), "+", round(coef(model2)[2], 4), "× Time\n")
+intercept_time = model2.params['const']
+time_coef = model2.params['Time']
+
+print("Estimated Coefficients (Anxiety ~ Time):")
+print("======================================")
+print(f"Intercept (β₀): {intercept_time:.4f}")
+print(f"Time (β₁): {time_coef:.4f}")
+print(f"\nRegression Equation: Anxiety = {intercept_time:.4f} + {time_coef:.4f} × Time")
 ```
 
 ### Comparison with True Relationship
 
-```{r}
+```{python}
 #| echo: false
 # Compare estimated coefficients with true relationship
-cat("COMPARISON: Estimated vs True Relationships (Time Model)\n")
-cat("=======================================================\n")
-cat("True generating equation: Anxiety = Stress + 0.1 × Time\n")
-cat("Estimated equation: Anxiety =", round(coef(model2)[1], 4), "+", round(coef(model2)[2], 4), "× Time\n\n")
+print("COMPARISON: Estimated vs True Relationships (Time Model)")
+print("=======================================================")
+print("True generating equation: Anxiety = Stress + 0.1 × Time")
+print(f"Estimated equation: Anxiety = {intercept_time:.4f} + {time_coef:.4f} × Time\n")
 
 # True coefficients
-true_intercept_time <- 0  # In true model: Anxiety = Stress + 0.1 × Time (no intercept)
-true_slope_time <- 0.1    # True coefficient for Time
+true_intercept_time = 0  # In true model: Anxiety = Stress + 0.1 × Time (no intercept)
+true_slope_time = 0.1    # True coefficient for Time
 
-# Estimated coefficients
-est_intercept_time <- coef(model2)[1]
-est_slope_time <- coef(model2)[2]
+print("Coefficient Analysis:")
+print("--------------------")
+print("Intercept:")
+print(f"  True (in generating model): 0")
+print(f"  Estimated: {intercept_time:.4f}")
+print(f"  Difference: {intercept_time - 0:.4f}\n")
 
-cat("Coefficient Analysis:\n")
-cat("--------------------\n")
-cat("Intercept:\n")
-cat("  True (in generating model): 0\n")
-cat("  Estimated:", round(est_intercept_time, 4), "\n")
-cat("  Difference:", round(est_intercept_time - 0, 4), "\n\n")
-
-cat("Time coefficient:\n")
-cat("  True: 0.1\n")
-cat("  Estimated:", round(est_slope_time, 4), "\n")
-cat("  Difference:", round(est_slope_time - 0.1, 4), "\n\n")
+print("Time coefficient:")
+print(f"  True: 0.1")
+print(f"  Estimated: {time_coef:.4f}")
+print(f"  Difference: {time_coef - 0.1:.4f}\n")
 
 # Model fit comparison
-r_squared_time <- summary(model2)$r.squared
-cat("Model Fit:\n")
-cat("  R-squared:", round(r_squared_time, 4), "(", round(r_squared_time*100, 1), "% of variance explained)\n")
+r_squared_time = model2.rsquared
+print("Model Fit:")
+print(f"  R-squared: {r_squared_time:.4f} ({r_squared_time*100:.1f}% of variance explained)")
 
 # Note about omitted variable bias
-cat("\nIMPORTANT NOTE:\n")
-cat("This model omits the Stress variable, which is a major component\n")
-cat("of the true relationship. This creates omitted variable bias.\n")
-cat("The Time coefficient may be biased because Stress and Time are\n")
-cat("correlated in the data generation process.\n")
+print("\nIMPORTANT NOTE:")
+print("This model omits the Stress variable, which is a major component")
+print("of the true relationship. This creates omitted variable bias.")
+print("The Time coefficient may be biased because Stress and Time are")
+print("correlated in the data generation process.")
 ```
 
 ### Scatter Plot: Anxiety vs Time
 
-```{r}
+```{python}
 #| echo: false
 # Create scatter plot for Anxiety vs Time
-plot(observDF$Time, observDF$Anxiety, 
-     main = "Anxiety vs Time\nwith Regression Line",
-     xlab = "Time", ylab = "Anxiety",
-     pch = 16, col = "purple", cex = 1.2)
-abline(model2, col = "red", lwd = 2)
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.scatter(observDF['Time'], observDF['Anxiety'], color='purple', s=80, alpha=0.7)
+ax.plot(observDF['Time'], model2.fittedvalues, color='red', linewidth=2, label='Regression Line')
 
 # Add confidence interval
-newx_time <- seq(min(observDF$Time), max(observDF$Time), length.out = 100)
-pred_time <- predict(model2, newdata = data.frame(Time = newx_time), interval = "confidence")
-lines(newx_time, pred_time[,2], col = "red", lty = 2)
-lines(newx_time, pred_time[,3], col = "red", lty = 2)
+newx_time = np.linspace(observDF['Time'].min(), observDF['Time'].max(), 100)
+newx_time_df = pd.DataFrame({'const': 1, 'Time': newx_time})
+pred_time = model2.get_prediction(newx_time_df)
+pred_time_summary = pred_time.summary_frame(alpha=0.05)
+ax.plot(newx_time, pred_time_summary['mean_ci_lower'], 'r--', linewidth=1, label='95% CI')
+ax.plot(newx_time, pred_time_summary['mean_ci_upper'], 'r--', linewidth=1)
+ax.set_xlabel('Time')
+ax.set_ylabel('Anxiety')
+ax.set_title('Anxiety vs Time\nwith Regression Line')
+ax.legend()
+ax.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
 
 # Save the plot
-png("anxiety_time_regression.png", width = 800, height = 600, res = 100)
-plot(observDF$Time, observDF$Anxiety, 
-     main = "Bivariate Regression: Anxiety vs Time",
-     xlab = "Time", ylab = "Anxiety",
-     pch = 16, col = "purple", cex = 1.2)
-abline(model2, col = "red", lwd = 2)
-lines(newx_time, pred_time[,2], col = "red", lty = 2)
-lines(newx_time, pred_time[,3], col = "red", lty = 2)
-dev.off()
+fig2, ax2 = plt.subplots(figsize=(8, 6))
+ax2.scatter(observDF['Time'], observDF['Anxiety'], color='purple', s=80, alpha=0.7)
+ax2.plot(observDF['Time'], model2.fittedvalues, color='red', linewidth=2)
+ax2.plot(newx_time, pred_time_summary['mean_ci_lower'], 'r--', linewidth=1)
+ax2.plot(newx_time, pred_time_summary['mean_ci_upper'], 'r--', linewidth=1)
+ax2.set_xlabel('Time')
+ax2.set_ylabel('Anxiety')
+ax2.set_title('Bivariate Regression: Anxiety vs Time')
+ax2.grid(True, alpha=0.3)
+plt.savefig('anxiety_time_regression.png', dpi=100, bbox_inches='tight')
+plt.close()
 ```
 
 ### Time Model Fit Assessment and Commentary
 
-```{r}
+```{python}
 #| echo: false
 # Detailed analysis of the Time regression fit
-cat("TIME MODEL FIT ANALYSIS:\n")
-cat("========================\n\n")
+print("TIME MODEL FIT ANALYSIS:")
+print("========================\n")
 
 # R-squared and adjusted R-squared
-r_squared_time <- summary(model2)$r.squared
-adj_r_squared_time <- summary(model2)$adj.r.squared
+adj_r_squared_time = model2.rsquared_adj
 
-cat("1. GOODNESS OF FIT:\n")
-cat("   R-squared:", round(r_squared_time, 4), "(", round(r_squared_time*100, 1), "% of variance explained)\n")
-cat("   Adjusted R-squared:", round(adj_r_squared_time, 4), "\n")
+print("1. GOODNESS OF FIT:")
+print(f"   R-squared: {r_squared_time:.4f} ({r_squared_time*100:.1f}% of variance explained)")
+print(f"   Adjusted R-squared: {adj_r_squared_time:.4f}")
 
-if (r_squared_time > 0.8) {
-  cat("   ✓ Excellent fit - model explains most of the variance\n")
-} else if (r_squared_time > 0.6) {
-  cat("   ✓ Good fit - model explains substantial variance\n")
-} else if (r_squared_time > 0.4) {
-  cat("   ⚠ Moderate fit - model explains some variance\n")
-} else {
-  cat("   ⚠ Poor fit - model explains little variance\n")
-}
+if r_squared_time > 0.8:
+    print("   ✓ Excellent fit - model explains most of the variance")
+elif r_squared_time > 0.6:
+    print("   ✓ Good fit - model explains substantial variance")
+elif r_squared_time > 0.4:
+    print("   ⚠ Moderate fit - model explains some variance")
+else:
+    print("   ⚠ Poor fit - model explains little variance")
 
 # Statistical significance
-f_stat_time <- summary(model2)$fstatistic[1]
-f_pvalue_time <- pf(f_stat_time, summary(model2)$fstatistic[2], summary(model2)$fstatistic[3], lower.tail = FALSE)
+f_stat_time = model2.fvalue
+f_pvalue_time = model2.f_pvalue
 
-cat("\n2. STATISTICAL SIGNIFICANCE:\n")
-cat("   F-statistic:", round(f_stat_time, 4), "\n")
-cat("   p-value:", format.pval(f_pvalue_time), "\n")
+print("\n2. STATISTICAL SIGNIFICANCE:")
+print(f"   F-statistic: {f_stat_time:.4f}")
+print(f"   p-value: {f_pvalue_time:.6f}")
 
-if (f_pvalue_time < 0.001) {
-  cat("   ✓ Highly significant relationship (p < 0.001)\n")
-} else if (f_pvalue_time < 0.01) {
-  cat("   ✓ Very significant relationship (p < 0.01)\n")
-} else if (f_pvalue_time < 0.05) {
-  cat("   ✓ Significant relationship (p < 0.05)\n")
-} else {
-  cat("   ⚠ Relationship not statistically significant (p ≥ 0.05)\n")
-}
+if f_pvalue_time < 0.001:
+    print("   ✓ Highly significant relationship (p < 0.001)")
+elif f_pvalue_time < 0.01:
+    print("   ✓ Very significant relationship (p < 0.01)")
+elif f_pvalue_time < 0.05:
+    print("   ✓ Significant relationship (p < 0.05)")
+else:
+    print("   ⚠ Relationship not statistically significant (p ≥ 0.05)")
 
 # Coefficient significance
-coef_pvalue_time <- summary(model2)$coefficients[2, 4]
-cat("\n3. COEFFICIENT SIGNIFICANCE:\n")
-cat("   Time coefficient p-value:", format.pval(coef_pvalue_time), "\n")
+coef_pvalue_time = model2.pvalues['Time']
+print("\n3. COEFFICIENT SIGNIFICANCE:")
+print(f"   Time coefficient p-value: {coef_pvalue_time:.6f}")
 
-if (coef_pvalue_time < 0.05) {
-  cat("   ✓ Time coefficient is statistically significant\n")
-} else {
-  cat("   ⚠ Time coefficient is not statistically significant\n")
-}
+if coef_pvalue_time < 0.05:
+    print("   ✓ Time coefficient is statistically significant")
+else:
+    print("   ⚠ Time coefficient is not statistically significant")
 
 # Compare with StressSurvey model
-cat("\n4. COMPARISON WITH STRESS SURVEY MODEL:\n")
-r_squared_stress <- summary(model1)$r.squared
-cat("   StressSurvey model R-squared:", round(r_squared_stress, 4), "\n")
-cat("   Time model R-squared:", round(r_squared_time, 4), "\n")
+print("\n4. COMPARISON WITH STRESS SURVEY MODEL:")
+print(f"   StressSurvey model R-squared: {r_squared:.4f}")
+print(f"   Time model R-squared: {r_squared_time:.4f}")
 
-if (r_squared_stress > r_squared_time) {
-  cat("   → StressSurvey explains more variance than Time alone\n")
-} else {
-  cat("   → Time explains more variance than StressSurvey alone\n")
-}
+if r_squared > r_squared_time:
+    print("   → StressSurvey explains more variance than Time alone")
+else:
+    print("   → Time explains more variance than StressSurvey alone")
 
 # Potential issues
-cat("\n5. POTENTIAL ISSUES:\n")
-cat("   • OMITTED VARIABLE BIAS: Major issue - Stress variable is missing\n")
-cat("   • True relationship: Anxiety = Stress + 0.1 × Time\n")
-cat("   • This model only uses Time, ignoring the dominant Stress effect\n")
-cat("   • Time coefficient may be biased due to correlation with omitted Stress\n")
-cat("   • Small sample size: Only", nrow(observDF), "observations\n")
-cat("   • Limited Time variation: Time values range from", round(min(observDF$Time), 1), "to", round(max(observDF$Time), 1), "\n")
+print("\n5. POTENTIAL ISSUES:")
+print("   • OMITTED VARIABLE BIAS: Major issue - Stress variable is missing")
+print("   • True relationship: Anxiety = Stress + 0.1 × Time")
+print("   • This model only uses Time, ignoring the dominant Stress effect")
+print("   • Time coefficient may be biased due to correlation with omitted Stress")
+print(f"   • Small sample size: Only {len(observDF)} observations")
+print(f"   • Limited Time variation: Time values range from {observDF['Time'].min():.1f} to {observDF['Time'].max():.1f}")
 
 # Residual analysis
-residuals_time <- resid(model2)
-cat("\n6. RESIDUAL ANALYSIS:\n")
-cat("   Mean of residuals:", round(mean(residuals_time), 6), "(should be ~0)\n")
-cat("   Standard deviation of residuals:", round(sd(residuals_time), 4), "\n")
+residuals_time = model2.resid
+print("\n6. RESIDUAL ANALYSIS:")
+print(f"   Mean of residuals: {residuals_time.mean():.6f} (should be ~0)")
+print(f"   Standard deviation of residuals: {residuals_time.std():.4f}")
 
 # Check for patterns in residuals
-if (abs(mean(residuals_time)) < 0.001) {
-  cat("   ✓ Residuals centered around zero\n")
-} else {
-  cat("   ⚠ Residuals not centered around zero\n")
-}
+if abs(residuals_time.mean()) < 0.001:
+    print("   ✓ Residuals centered around zero")
+else:
+    print("   ⚠ Residuals not centered around zero")
 
 # True vs estimated coefficient comparison
-true_time_coef <- 0.1
-est_time_coef <- coef(model2)[2]
-cat("\n7. COEFFICIENT ACCURACY:\n")
-cat("   True Time coefficient: 0.1\n")
-cat("   Estimated Time coefficient:", round(est_time_coef, 4), "\n")
-cat("   Bias:", round(est_time_coef - true_time_coef, 4), "\n")
+print("\n7. COEFFICIENT ACCURACY:")
+print(f"   True Time coefficient: 0.1")
+print(f"   Estimated Time coefficient: {time_coef:.4f}")
+print(f"   Bias: {time_coef - 0.1:.4f}")
 
-if (abs(est_time_coef - true_time_coef) < 0.01) {
-  cat("   ✓ Coefficient estimate is very close to true value\n")
-} else if (abs(est_time_coef - true_time_coef) < 0.05) {
-  cat("   ⚠ Coefficient estimate is somewhat biased\n")
-} else {
-  cat("   ⚠ Coefficient estimate is significantly biased\n")
-}
+if abs(time_coef - 0.1) < 0.01:
+    print("   ✓ Coefficient estimate is very close to true value")
+elif abs(time_coef - 0.1) < 0.05:
+    print("   ⚠ Coefficient estimate is somewhat biased")
+else:
+    print("   ⚠ Coefficient estimate is significantly biased")
 ```
 
 ## Question 5: Multiple Regression of Anxiety on StressSurvey and Time
 
 ### Multiple Regression Model
 
-```{r}
+```{python}
 #| echo: false
 # Fit the multiple regression model: Anxiety ~ StressSurvey + Time
-model3 <- lm(Anxiety ~ StressSurvey + Time, data = observDF)
+X3 = observDF[['StressSurvey', 'Time']]
+X3_sm = sm.add_constant(X3)
+model3 = sm.OLS(y, X3_sm).fit()
 
 # Display the regression results
-summary(model3)
+print(model3.summary())
 ```
 
 ### Estimated Coefficients for Multiple Regression
 
-```{r}
+```{python}
 #| echo: false
 # Print the estimated coefficients for the multiple regression model
-cat("Estimated Coefficients (Anxiety ~ StressSurvey + Time):\n")
-cat("=====================================================\n")
-cat("Intercept (β₀):", round(coef(model3)[1], 4), "\n")
-cat("StressSurvey (β₁):", round(coef(model3)[2], 4), "\n")
-cat("Time (β₂):", round(coef(model3)[3], 4), "\n")
-cat("\nRegression Equation: Anxiety =", round(coef(model3)[1], 4), "+", round(coef(model3)[2], 4), "× StressSurvey +", round(coef(model3)[3], 4), "× Time\n")
+intercept_mult = model3.params['const']
+stress_coef_mult = model3.params['StressSurvey']
+time_coef_mult = model3.params['Time']
+
+print("Estimated Coefficients (Anxiety ~ StressSurvey + Time):")
+print("=====================================================")
+print(f"Intercept (β₀): {intercept_mult:.4f}")
+print(f"StressSurvey (β₁): {stress_coef_mult:.4f}")
+print(f"Time (β₂): {time_coef_mult:.4f}")
+print(f"\nRegression Equation: Anxiety = {intercept_mult:.4f} + {stress_coef_mult:.4f} × StressSurvey + {time_coef_mult:.4f} × Time")
 ```
 
 ### Comparison with True Relationship
 
-```{r}
+```{python}
 #| echo: false
 # Compare estimated coefficients with true relationship
-cat("COMPARISON: Estimated vs True Relationships (Multiple Regression)\n")
-cat("================================================================\n")
-cat("True generating equation: Anxiety = Stress + 0.1 × Time\n")
-cat("Estimated equation: Anxiety =", round(coef(model3)[1], 4), "+", round(coef(model3)[2], 4), "× StressSurvey +", round(coef(model3)[3], 4), "× Time\n\n")
+print("COMPARISON: Estimated vs True Relationships (Multiple Regression)")
+print("================================================================")
+print("True generating equation: Anxiety = Stress + 0.1 × Time")
+print(f"Estimated equation: Anxiety = {intercept_mult:.4f} + {stress_coef_mult:.4f} × StressSurvey + {time_coef_mult:.4f} × Time\n")
 
 # True coefficients (remember StressSurvey = 3 × Stress)
-true_intercept_multiple <- 0  # In true model: Anxiety = Stress + 0.1 × Time (no intercept)
-true_slope_stress_multiple <- 1  # True coefficient for Stress
-true_slope_time_multiple <- 0.1  # True coefficient for Time
-expected_stresssurvey_coef <- 1/3  # Since StressSurvey = 3 × Stress
+true_intercept_multiple = 0  # In true model: Anxiety = Stress + 0.1 × Time (no intercept)
+true_slope_stress_multiple = 1  # True coefficient for Stress
+true_slope_time_multiple = 0.1  # True coefficient for Time
+expected_stresssurvey_coef = 1/3  # Since StressSurvey = 3 × Stress
 
-# Estimated coefficients
-est_intercept_multiple <- coef(model3)[1]
-est_slope_stresssurvey_multiple <- coef(model3)[2]
-est_slope_time_multiple <- coef(model3)[3]
+print("Coefficient Analysis:")
+print("--------------------")
+print("Intercept:")
+print(f"  True (in generating model): 0")
+print(f"  Estimated: {intercept_mult:.4f}")
+print(f"  Difference: {intercept_mult - 0:.4f}\n")
 
-cat("Coefficient Analysis:\n")
-cat("--------------------\n")
-cat("Intercept:\n")
-cat("  True (in generating model): 0\n")
-cat("  Estimated:", round(est_intercept_multiple, 4), "\n")
-cat("  Difference:", round(est_intercept_multiple - 0, 4), "\n\n")
+print("StressSurvey coefficient:")
+print(f"  Expected (1/3 of true Stress coefficient): {expected_stresssurvey_coef:.4f}")
+print(f"  Estimated: {stress_coef_mult:.4f}")
+print(f"  Difference from expected: {stress_coef_mult - expected_stresssurvey_coef:.4f}\n")
 
-cat("StressSurvey coefficient:\n")
-cat("  Expected (1/3 of true Stress coefficient):", round(expected_stresssurvey_coef, 4), "\n")
-cat("  Estimated:", round(est_slope_stresssurvey_multiple, 4), "\n")
-cat("  Difference from expected:", round(est_slope_stresssurvey_multiple - expected_stresssurvey_coef, 4), "\n\n")
-
-cat("Time coefficient:\n")
-cat("  True: 0.1\n")
-cat("  Estimated:", round(est_slope_time_multiple, 4), "\n")
-cat("  Difference:", round(est_slope_time_multiple - 0.1, 4), "\n\n")
+print("Time coefficient:")
+print(f"  True: 0.1")
+print(f"  Estimated: {time_coef_mult:.4f}")
+print(f"  Difference: {time_coef_mult - 0.1:.4f}\n")
 
 # Model fit comparison
-r_squared_multiple <- summary(model3)$r.squared
-cat("Model Fit:\n")
-cat("  R-squared:", round(r_squared_multiple, 4), "(", round(r_squared_multiple*100, 1), "% of variance explained)\n")
+r_squared_multiple = model3.rsquared
+print("Model Fit:")
+print(f"  R-squared: {r_squared_multiple:.4f} ({r_squared_multiple*100:.1f}% of variance explained)")
 
 # Compare with single variable models
-r_squared_stress <- summary(model1)$r.squared
-r_squared_time <- summary(model2)$r.squared
+print("\nModel Comparison:")
+print(f"  StressSurvey only R-squared: {r_squared:.4f}")
+print(f"  Time only R-squared: {r_squared_time:.4f}")
+print(f"  Multiple regression R-squared: {r_squared_multiple:.4f}")
 
-cat("\nModel Comparison:\n")
-cat("  StressSurvey only R-squared:", round(r_squared_stress, 4), "\n")
-cat("  Time only R-squared:", round(r_squared_time, 4), "\n")
-cat("  Multiple regression R-squared:", round(r_squared_multiple, 4), "\n")
-
-if (r_squared_multiple > max(r_squared_stress, r_squared_time)) {
-  cat("  ✓ Multiple regression explains more variance than either single variable model\n")
-} else {
-  cat("  ⚠ Multiple regression does not improve over single variable models\n")
-}
+if r_squared_multiple > max(r_squared, r_squared_time):
+    print("  ✓ Multiple regression explains more variance than either single variable model")
+else:
+    print("  ⚠ Multiple regression does not improve over single variable models")
 ```
 
 ### Multiple Regression Fit Assessment
 
-```{r}
+```{python}
 #| echo: false
 # Detailed analysis of the multiple regression fit
-cat("MULTIPLE REGRESSION FIT ANALYSIS:\n")
-cat("================================\n\n")
+print("MULTIPLE REGRESSION FIT ANALYSIS:")
+print("================================\n")
 
 # R-squared and adjusted R-squared
-adj_r_squared_multiple <- summary(model3)$adj.r.squared
+adj_r_squared_multiple = model3.rsquared_adj
 
-cat("1. GOODNESS OF FIT:\n")
-cat("   R-squared:", round(r_squared_multiple, 4), "(", round(r_squared_multiple*100, 1), "% of variance explained)\n")
-cat("   Adjusted R-squared:", round(adj_r_squared_multiple, 4), "\n")
+print("1. GOODNESS OF FIT:")
+print(f"   R-squared: {r_squared_multiple:.4f} ({r_squared_multiple*100:.1f}% of variance explained)")
+print(f"   Adjusted R-squared: {adj_r_squared_multiple:.4f}")
 
-if (r_squared_multiple > 0.95) {
-  cat("   ✓ Excellent fit - model explains almost all variance\n")
-} else if (r_squared_multiple > 0.8) {
-  cat("   ✓ Very good fit - model explains most of the variance\n")
-} else if (r_squared_multiple > 0.6) {
-  cat("   ✓ Good fit - model explains substantial variance\n")
-} else {
-  cat("   ⚠ Moderate fit - model explains some variance\n")
-}
+if r_squared_multiple > 0.95:
+    print("   ✓ Excellent fit - model explains almost all variance")
+elif r_squared_multiple > 0.8:
+    print("   ✓ Very good fit - model explains most of the variance")
+elif r_squared_multiple > 0.6:
+    print("   ✓ Good fit - model explains substantial variance")
+else:
+    print("   ⚠ Moderate fit - model explains some variance")
 
 # Statistical significance
-f_stat_multiple <- summary(model3)$fstatistic[1]
-f_pvalue_multiple <- pf(f_stat_multiple, summary(model3)$fstatistic[2], summary(model3)$fstatistic[3], lower.tail = FALSE)
+f_stat_multiple = model3.fvalue
+f_pvalue_multiple = model3.f_pvalue
 
-cat("\n2. OVERALL MODEL SIGNIFICANCE:\n")
-cat("   F-statistic:", round(f_stat_multiple, 4), "\n")
-cat("   p-value:", format.pval(f_pvalue_multiple), "\n")
+print("\n2. OVERALL MODEL SIGNIFICANCE:")
+print(f"   F-statistic: {f_stat_multiple:.4f}")
+print(f"   p-value: {f_pvalue_multiple:.6f}")
 
-if (f_pvalue_multiple < 0.001) {
-  cat("   ✓ Highly significant overall model (p < 0.001)\n")
-} else if (f_pvalue_multiple < 0.01) {
-  cat("   ✓ Very significant overall model (p < 0.01)\n")
-} else if (f_pvalue_multiple < 0.05) {
-  cat("   ✓ Significant overall model (p < 0.05)\n")
-} else {
-  cat("   ⚠ Overall model not statistically significant (p ≥ 0.05)\n")
-}
+if f_pvalue_multiple < 0.001:
+    print("   ✓ Highly significant overall model (p < 0.001)")
+elif f_pvalue_multiple < 0.01:
+    print("   ✓ Very significant overall model (p < 0.01)")
+elif f_pvalue_multiple < 0.05:
+    print("   ✓ Significant overall model (p < 0.05)")
+else:
+    print("   ⚠ Overall model not statistically significant (p ≥ 0.05)")
 
 # Individual coefficient significance
-stress_pvalue <- summary(model3)$coefficients[2, 4]
-time_pvalue <- summary(model3)$coefficients[3, 4]
+stress_pvalue_mult = model3.pvalues['StressSurvey']
+time_pvalue_mult = model3.pvalues['Time']
 
-cat("\n3. INDIVIDUAL COEFFICIENT SIGNIFICANCE:\n")
-cat("   StressSurvey coefficient p-value:", format.pval(stress_pvalue), "\n")
-cat("   Time coefficient p-value:", format.pval(time_pvalue), "\n")
+print("\n3. INDIVIDUAL COEFFICIENT SIGNIFICANCE:")
+print(f"   StressSurvey coefficient p-value: {stress_pvalue_mult:.6f}")
+print(f"   Time coefficient p-value: {time_pvalue_mult:.6f}")
 
-if (stress_pvalue < 0.05) {
-  cat("   ✓ StressSurvey coefficient is statistically significant\n")
-} else {
-  cat("   ⚠ StressSurvey coefficient is not statistically significant\n")
-}
+if stress_pvalue_mult < 0.05:
+    print("   ✓ StressSurvey coefficient is statistically significant")
+else:
+    print("   ⚠ StressSurvey coefficient is not statistically significant")
 
-if (time_pvalue < 0.05) {
-  cat("   ✓ Time coefficient is statistically significant\n")
-} else {
-  cat("   ⚠ Time coefficient is not statistically significant\n")
-}
+if time_pvalue_mult < 0.05:
+    print("   ✓ Time coefficient is statistically significant")
+else:
+    print("   ⚠ Time coefficient is not statistically significant")
 
 # Coefficient accuracy assessment
-cat("\n4. COEFFICIENT ACCURACY:\n")
-stress_bias <- est_slope_stresssurvey_multiple - expected_stresssurvey_coef
-time_bias <- est_slope_time_multiple - 0.1
+print("\n4. COEFFICIENT ACCURACY:")
+stress_bias = stress_coef_mult - expected_stresssurvey_coef
+time_bias = time_coef_mult - 0.1
 
-cat("   StressSurvey coefficient bias:", round(stress_bias, 4), "\n")
-cat("   Time coefficient bias:", round(time_bias, 4), "\n")
+print(f"   StressSurvey coefficient bias: {stress_bias:.4f}")
+print(f"   Time coefficient bias: {time_bias:.4f}")
 
-if (abs(stress_bias) < 0.01 && abs(time_bias) < 0.01) {
-  cat("   ✓ Both coefficients are very close to expected values\n")
-} else if (abs(stress_bias) < 0.05 && abs(time_bias) < 0.05) {
-  cat("   ✓ Both coefficients are reasonably close to expected values\n")
-} else {
-  cat("   ⚠ Some coefficients show significant bias\n")
-}
+if abs(stress_bias) < 0.01 and abs(time_bias) < 0.01:
+    print("   ✓ Both coefficients are very close to expected values")
+elif abs(stress_bias) < 0.05 and abs(time_bias) < 0.05:
+    print("   ✓ Both coefficients are reasonably close to expected values")
+else:
+    print("   ⚠ Some coefficients show significant bias")
 
 # Key insights
-cat("\n5. KEY INSIGHTS:\n")
-cat("   • This model includes both variables from the true relationship\n")
-cat("   • StressSurvey captures the main Stress effect (scaled by 1/3)\n")
-cat("   • Time coefficient should be close to the true 0.1 value\n")
-cat("   • This is the most complete model given the available variables\n")
+print("\n5. KEY INSIGHTS:")
+print("   • This model includes both variables from the true relationship")
+print("   • StressSurvey captures the main Stress effect (scaled by 1/3)")
+print("   • Time coefficient should be close to the true 0.1 value")
+print("   • This is the most complete model given the available variables")
 ```
 
