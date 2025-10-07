@@ -59,33 +59,7 @@ model1 = sm.OLS(y, X1_sm).fit()
 print(model1.summary())
 ```
 
-### Regression Output Interpretation
 
-```{python}
-#| echo: false
-# Extract key statistics
-print(f"R-squared: {model1.rsquared:.4f}")
-print(f"Adjusted R-squared: {model1.rsquared_adj:.4f}")
-print(f"F-statistic: {model1.fvalue:.4f}")
-print(f"p-value: {model1.f_pvalue:.6f}")
-```
-
-
-### Reference to Saved Plot
-
-```{python}
-#| echo: false
-# Check if the plot file exists and display information about it
-import os
-
-if os.path.exists("anxiety_stress_regression.png"):
-    file_size = os.path.getsize("anxiety_stress_regression.png") / 1024
-    print(f"✓ Plot successfully saved as: anxiety_stress_regression.png")
-    print(f"File size: {file_size:.2f} KB")
-    print(f"Full path: {os.path.abspath('anxiety_stress_regression.png')}")
-else:
-    print("⚠ Plot file not found. Please run the plotting code above first.")
-```
 
 ### Estimated Coefficients
 
@@ -101,39 +75,13 @@ print(f"StressSurvey (β₁): {stress_coef:.4f}")
 print(f"\nRegression Equation: Anxiety = {intercept:.4f} + {stress_coef:.4f} × StressSurvey")
 ```
 
-### Comparison with True Relationships
+---
 
-```{python}
-#| echo: false
-# True relationship from the data generation: Anxiety = Stress + 0.1 × Time
-# But we're regressing Anxiety on StressSurvey, not Stress
+**INTERPRETATION:**
 
-# Extract true coefficients for comparison
-true_intercept = 0  # In the true model: Anxiety = Stress + 0.1 × Time (no intercept)
-true_slope_stress = 1  # True coefficient for Stress in the generating equation
+The regression using StressSurvey produces the equation Anxiety = –1.52 + 1.05 × StressSurvey. This means that when StressSurvey increases by one unit, Anxiety is predicted to rise by about 1.05 units. The intercept of –1.52 implies that if StressSurvey were zero, Anxiety would be negative, which is not realistic but reflects how the line was forced to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is too high. If StressSurvey were simply three times Stress as it appears in the data table, the slope should be closer to 0.33, not 1.05. The reason for the inflation is that the model leaves out Time, which is correlated with StressSurvey, so the regression mistakenly shifts part of Time’s effect onto StressSurvey. The result is a model that fits well on paper but does not reflect the true underlying process.
 
-print("COMPARISON: Estimated vs True Relationships")
-print("==========================================")
-print("True generating equation: Anxiety = Stress + 0.1 × Time")
-print(f"Estimated equation: Anxiety = {intercept:.4f} + {stress_coef:.4f} × StressSurvey\n")
 
-print("Coefficient Analysis:")
-print("--------------------")
-print("Intercept:")
-print(f"  True (in generating model): 0")
-print(f"  Estimated: {intercept:.4f}")
-print(f"  Difference: {intercept - 0:.4f}\n")
-
-print("Slope coefficient:")
-print(f"  True (Stress coefficient): 1.0")
-print(f"  Estimated (StressSurvey): {stress_coef:.4f}")
-print(f"  Difference: {stress_coef - 1.0:.4f}\n")
-
-print("Note: We're comparing StressSurvey coefficient to true Stress coefficient")
-print("StressSurvey values are 3x larger than Stress values in this dataset")
-print(f"So the estimated coefficient should be approximately 1/3 = {1/3:.4f}")
-print(f"Actual ratio: {stress_coef:.4f}")
-```
 
 ### Scatter Plot Analysis and Commentary
 
