@@ -280,103 +280,6 @@ plt.savefig('anxiety_time_regression.png', dpi=100, bbox_inches='tight')
 plt.close()
 ```
 
-### Time Model Fit Assessment and Commentary
-
-```{python}
-#| echo: false
-# Detailed analysis of the Time regression fit
-print("TIME MODEL FIT ANALYSIS:")
-print("========================\n")
-
-# R-squared and adjusted R-squared
-r_squared_time = model2.rsquared
-adj_r_squared_time = model2.rsquared_adj
-
-print("1. GOODNESS OF FIT:")
-print(f"   R-squared: {r_squared_time:.4f} ({r_squared_time*100:.1f}% of variance explained)")
-print(f"   Adjusted R-squared: {adj_r_squared_time:.4f}")
-
-if r_squared_time > 0.8:
-    print("   ✓ Excellent fit - model explains most of the variance")
-elif r_squared_time > 0.6:
-    print("   ✓ Good fit - model explains substantial variance")
-elif r_squared_time > 0.4:
-    print("   ⚠ Moderate fit - model explains some variance")
-else:
-    print("   ⚠ Poor fit - model explains little variance")
-
-# Statistical significance
-f_stat_time = model2.fvalue
-f_pvalue_time = model2.f_pvalue
-
-print("\n2. STATISTICAL SIGNIFICANCE:")
-print(f"   F-statistic: {f_stat_time:.4f}")
-print(f"   p-value: {f_pvalue_time:.6f}")
-
-if f_pvalue_time < 0.001:
-    print("   ✓ Highly significant relationship (p < 0.001)")
-elif f_pvalue_time < 0.01:
-    print("   ✓ Very significant relationship (p < 0.01)")
-elif f_pvalue_time < 0.05:
-    print("   ✓ Significant relationship (p < 0.05)")
-else:
-    print("   ⚠ Relationship not statistically significant (p ≥ 0.05)")
-
-# Coefficient significance
-coef_pvalue_time = model2.pvalues['Time']
-print("\n3. COEFFICIENT SIGNIFICANCE:")
-print(f"   Time coefficient p-value: {coef_pvalue_time:.6f}")
-
-if coef_pvalue_time < 0.05:
-    print("   ✓ Time coefficient is statistically significant")
-else:
-    print("   ⚠ Time coefficient is not statistically significant")
-
-# Compare with StressSurvey model
-print("\n4. COMPARISON WITH STRESS SURVEY MODEL:")
-print(f"   StressSurvey model R-squared: {r_squared:.4f}")
-print(f"   Time model R-squared: {r_squared_time:.4f}")
-
-if r_squared > r_squared_time:
-    print("   → StressSurvey explains more variance than Time alone")
-else:
-    print("   → Time explains more variance than StressSurvey alone")
-
-# Potential issues
-print("\n5. POTENTIAL ISSUES:")
-print("   • OMITTED VARIABLE BIAS: Major issue - Stress variable is missing")
-print("   • True relationship: Anxiety = Stress + 0.1 × Time")
-print("   • This model only uses Time, ignoring the dominant Stress effect")
-print("   • Time coefficient may be biased due to correlation with omitted Stress")
-print(f"   • Small sample size: Only {len(observDF)} observations")
-print(f"   • Limited Time variation: Time values range from {observDF['Time'].min():.1f} to {observDF['Time'].max():.1f}")
-
-# Residual analysis
-residuals_time = model2.resid
-print("\n6. RESIDUAL ANALYSIS:")
-print(f"   Mean of residuals: {residuals_time.mean():.6f} (should be ~0)")
-print(f"   Standard deviation of residuals: {residuals_time.std():.4f}")
-
-# Check for patterns in residuals
-if abs(residuals_time.mean()) < 0.001:
-    print("   ✓ Residuals centered around zero")
-else:
-    print("   ⚠ Residuals not centered around zero")
-
-# True vs estimated coefficient comparison
-print("\n7. COEFFICIENT ACCURACY:")
-print(f"   True Time coefficient: 0.1")
-print(f"   Estimated Time coefficient: {time_coef:.4f}")
-print(f"   Bias: {time_coef - 0.1:.4f}")
-
-if abs(time_coef - 0.1) < 0.01:
-    print("   ✓ Coefficient estimate is very close to true value")
-elif abs(time_coef - 0.1) < 0.05:
-    print("   ⚠ Coefficient estimate is somewhat biased")
-else:
-    print("   ⚠ Coefficient estimate is significantly biased")
-```
-
 ---
 
 **SCATTER PLOT INTERPRETATION:**
@@ -544,185 +447,37 @@ print(f"\nRegression Equation: Anxiety = {intercept_stress:.4f} + {stress_coef_t
 
 **INTERPRETATION:**
 
-The multiple regression of Anxiety on both Stress and Time gives us Anxiety = 0.000 + 1.000 × Stress + 0.100 × Time, with R² = 0.935. This happens to be the True coefficients given to us in the problem. 
+The multiple regression of Anxiety on both Stress and Time gives us Anxiety = 0.000 + 1.000 × Stress + 0.100 × Time, with R² = 0.935. This happens to be the True coefficients given to us in the packet. This shows that with the right varaibles, multiple regression can recover the true relationship. However, the difficulty comes when we don't know the true variables, and we have to use proxy variables.
 
 ---
 
-## Comparing the Two Multiple Regression Models
+## Question 7: Comparing the Two Multiple Regression Models
 
-### R-squared Comparison
+---
+Both models show really high R-squared values (.935 and 1.00), which means they explain almost all of the changes in Anxiety. But that doesn’t mean the models are actually good. In the model with StressSurvey and Time, the coefficients don’t make much sense since StressSurvey comes out way too big and Time is negative even though it should be positive. The p-values show that the results are statistically significant, but that only means there is a strong pattern in the data, not that the coefficients are actually correct. This problem happens because StressSurvey is only a proxy and also because StressSurvey and Time move together, which messes up the estimates.
 
-```{python}
-#| echo: false
-# Get R-squared values for comparison
-r_squared_stress_time = model4.rsquared
+The model with Stress and Time works better because the coefficients match the true equation, with Stress equal to 1.00 and Time equal to 0.10. These are also statistically significant and actually meaningful.
 
-print("R-SQUARED COMPARISON:")
-print("=" * 70)
-print(f"\nModel 3 (Anxiety ~ StressSurvey + Time):")
-print(f"  R-squared = {r_squared_multiple:.4f} ({r_squared_multiple*100:.1f}% of variance explained)")
-
-print(f"\nModel 4 (Anxiety ~ Stress + Time):")
-print(f"  R-squared = {r_squared_stress_time:.4f} ({r_squared_stress_time*100:.1f}% of variance explained)")
-
-print(f"\nDifference: {abs(r_squared_stress_time - r_squared_multiple):.6f}")
-
-if abs(r_squared_stress_time - r_squared_multiple) < 0.001:
-    print("\nINTERPRETATION: The R-squared values are nearly identical between the two")
-    print("models. This makes sense because StressSurvey is simply a scaled version")
-    print("of Stress (StressSurvey = 3 × Stress). Both models capture the same")
-    print("underlying relationship and explain virtually the same amount of variance")
-    print("in Anxiety. Using the proxy variable (StressSurvey) instead of the actual")
-    print("variable (Stress) does NOT reduce the model's explanatory power.")
-else:
-    print(f"\nINTERPRETATION: Model 4 has a {'higher' if r_squared_stress_time > r_squared_multiple else 'lower'} R-squared.")
-    print("This suggests that using the actual Stress variable provides a better fit.")
-```
-
-### Coefficient Interpretation Comparison
-
-```{python}
-#| echo: false
-print("\nCOEFFICIENT COMPARISON:")
-print("=" * 70)
-
-print("\nModel 3 (StressSurvey + Time):")
-print(f"  Intercept: {intercept_mult:.4f}")
-print(f"  StressSurvey coefficient: {stress_coef_mult:.4f} (expected ≈ 0.333)")
-print(f"  Time coefficient: {time_coef_mult:.4f} (expected ≈ 0.1)")
-
-print("\nModel 4 (Stress + Time):")
-print(f"  Intercept: {intercept_stress:.4f}")
-print(f"  Stress coefficient: {stress_coef_true:.4f} (expected = 1.0)")
-print(f"  Time coefficient: {time_coef_stress:.4f} (expected = 0.1)")
-
-print("\nTime Coefficient Comparison:")
-print(f"  Model 3 Time coefficient: {time_coef_mult:.4f}")
-print(f"  Model 4 Time coefficient: {time_coef_stress:.4f}")
-print(f"  Difference: {abs(time_coef_mult - time_coef_stress):.6f}")
-
-print("\nINTERPRETATION:")
-print("The Time coefficients are nearly identical in both models, which is expected")
-print("because Time is the same variable in both regressions. Model 4's coefficients")
-print("are closer to the true values because it uses the actual Stress variable.")
-print(f"The Stress coefficient ({stress_coef_true:.4f}) in Model 4 is very close to")
-print(f"the true value of 1.0, while the StressSurvey coefficient ({stress_coef_mult:.4f})")
-print(f"in Model 3 is close to 1/3 ≈ 0.333, which is the expected scaling factor.")
-```
-
-### Statistical Significance Analysis
-
-```{python}
-#| echo: false
-print("\nSTATISTICAL SIGNIFICANCE ANALYSIS:")
-print("=" * 70)
-
-# Model 3 significance
-stress_pval_m3 = model3.pvalues['StressSurvey']
-time_pval_m3 = model3.pvalues['Time']
-
-print("\nModel 3 (StressSurvey + Time):")
-print(f"  StressSurvey coefficient p-value: {stress_pval_m3:.6f}")
-print(f"    {'✓ Statistically significant (p < 0.05)' if stress_pval_m3 < 0.05 else '✗ NOT statistically significant (p ≥ 0.05)'}")
-print(f"  Time coefficient p-value: {time_pval_m3:.6f}")
-print(f"    {'✓ Statistically significant (p < 0.05)' if time_pval_m3 < 0.05 else '✗ NOT statistically significant (p ≥ 0.05)'}")
-
-both_sig_m3 = (stress_pval_m3 < 0.05) and (time_pval_m3 < 0.05)
-print(f"\n  Both coefficients significant? {'YES ✓' if both_sig_m3 else 'NO ✗'}")
-
-# Model 4 significance
-stress_pval_m4 = model4.pvalues['Stress']
-time_pval_m4 = model4.pvalues['Time']
-
-print("\nModel 4 (Stress + Time):")
-print(f"  Stress coefficient p-value: {stress_pval_m4:.6f}")
-print(f"    {'✓ Statistically significant (p < 0.05)' if stress_pval_m4 < 0.05 else '✗ NOT statistically significant (p ≥ 0.05)'}")
-print(f"  Time coefficient p-value: {time_pval_m4:.6f}")
-print(f"    {'✓ Statistically significant (p < 0.05)' if time_pval_m4 < 0.05 else '✗ NOT statistically significant (p ≥ 0.05)'}")
-
-both_sig_m4 = (stress_pval_m4 < 0.05) and (time_pval_m4 < 0.05)
-print(f"\n  Both coefficients significant? {'YES ✓' if both_sig_m4 else 'NO ✗'}")
-
-print("\n" + "=" * 70)
-print("INTERPRETATION:")
-
-if both_sig_m3 and both_sig_m4:
-    print("\nBoth models show statistical significance in ALL coefficient estimates.")
-    print("This indicates that both StressSurvey/Stress and Time contribute")
-    print("significantly to explaining variation in Anxiety. The high significance")
-    print("in both models demonstrates that:")
-    print("  • The relationships are strong and reliable")
-    print("  • We can be confident these variables matter for predicting Anxiety")
-    print("  • The sample size, while small (n=15), is sufficient to detect these effects")
-elif both_sig_m3 and not both_sig_m4:
-    print("\nModel 3 shows significance in all coefficients, but Model 4 does not.")
-    if time_pval_m4 >= 0.05:
-        print("The Time coefficient in Model 4 is NOT significant. This could indicate")
-        print("multicollinearity or that the small sample size limits precision.")
-elif not both_sig_m3 and both_sig_m4:
-    print("\nModel 4 shows significance in all coefficients, but Model 3 does not.")
-    if time_pval_m3 >= 0.05:
-        print("The Time coefficient in Model 3 is NOT significant, likely because")
-        print("StressSurvey captures most of the variance, leaving little for Time.")
-else:
-    print("\nNeither model shows significance in all coefficients.")
-    print("This suggests potential issues with multicollinearity or sample size.")
-```
-
-### Real-World Implications
-
-```{python}
-#| echo: false
-print("\nREAL-WORLD IMPLICATIONS OF MULTIPLE REGRESSION:")
-print("=" * 70)
-
-print("\n1. VARIABLE SELECTION:")
-print("   When using a proxy variable (StressSurvey) instead of the actual variable")
-print("   (Stress), the model can still have excellent fit and statistical significance.")
-print(f"   Both models have R-squared ≈ {r_squared_multiple:.4f}, showing that proxy")
-print("   variables can work well IF they have a consistent relationship with the")
-print("   true variable. However, coefficient interpretation changes - you must")
-print("   account for the scaling factor (3x in this case).")
-
-print("\n2. MODEL SPECIFICATION:")
-print("   Including both relevant variables (Stress/StressSurvey AND Time) is crucial.")
-print(f"   The multiple regression R-squared ({r_squared_multiple:.4f}) is much higher")
-print(f"   than the single-variable models (StressSurvey only: {r_squared:.4f},")
-print(f"   Time only: {r_squared_time:.4f}). This demonstrates that omitting important")
-print("   variables leads to biased coefficients and reduced explanatory power.")
-
-print("\n3. STATISTICAL vs PRACTICAL SIGNIFICANCE:")
-print("   A model can have high statistical significance but still use suboptimal")
-print("   variables. Both models are highly significant, but Model 4 uses the TRUE")
-print("   variables from the data generation process. In real research, you often")
-print("   don't know the 'true' model, so you must:")
-print("     • Use theory to guide variable selection")
-print("     • Test alternative specifications")
-print("     • Be cautious about causal interpretations")
-
-print("\n4. RESEARCH PRACTICE IMPLICATIONS:")
-print("   This exercise demonstrates several critical lessons:")
-print("     • Omitted variable bias is real: Single-variable models gave biased")
-print("       coefficient estimates")
-print("     • Proxy variables can work: StressSurvey performed well despite not")
-print("       being the 'true' variable")
-print("     • Always check significance: Not all variables in a model may be")
-print("       statistically significant")
-print("     • R-squared isn't everything: Both multiple regression models had high")
-print("       R-squared, but Model 4 better captures the true relationship")
-print("     • Understanding the DGP matters: Knowing how data was generated helps")
-print("       evaluate model quality - a luxury we don't have in real research!")
-```
+Overall, this shows that even if a regression has a really high R-squared and very small p-values, that doesn’t mean the model is right. If the wrong variables are used or if they overlap too much, the results can still be misleading. In real-world situations, it is important to use the right variables and not just look at the statistics when making decisions.
 
 ---
 
-**📝 FINAL INTERPRETATION - Model Comparison:**
-
-*Based on all four regression models, write your final interpretation:*
-- *Which model performed best and why?*
-- *How did Model 4 (Stress + Time) compare to Model 3 (StressSurvey + Time)?*
-- *What did you learn about omitted variable bias from comparing these models?*
-- *What did you learn about using proxy variables (StressSurvey vs Stress)?*
-- *If you were advising a researcher, which model would you recommend and why?*
+## Question 8: Reflect on Real-World Implications
 
 ---
+
+**For the multiple regression of Anxiety on both StressSurvey and Time**, we could expect to see a headline such as:
+
+> ### **"Time on Social Media Found to DECREASE Anxiety"**
+
+**For the multiple regression of Anxiety on Stress and Time**, we could expect to see a headline such as:
+
+> ### **"Time on Social Media Found to INCREASE Anxiety"**
+
+---
+
+**Who Believes Which Headline?**
+
+**A Typical Parent** will likely believe the second headline, as they likely see the negative effects of time on social media on their children. Additionally, the parent will likely be looking for reasons to reduce the time their children spend on social media.
+
+**A Social Media Executive** will likely prefer the first headline, as they can use it to argue that time on social media is a good thing, and that it leads to decreased anxiety.
