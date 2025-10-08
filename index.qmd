@@ -63,12 +63,15 @@ print(f"StressSurvey (β₁): {stress_coef:.4f}")
 print(f"\nRegression Equation: Anxiety = {intercept:.4f} + {stress_coef:.4f} × StressSurvey")
 ```
 
+### Interpretation
+
 ---
 
 **INTERPRETATION:**
 
-The regression using StressSurvey produces the equation Anxiety = –1.52 + 1.05 × StressSurvey. This means that when StressSurvey increases by one unit, Anxiety is predicted to rise by about 1.05 units. The intercept of –1.52 implies that if StressSurvey were zero, Anxiety would be negative, which is not realistic but reflects how the line was forced to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is too high. If StressSurvey were simply three times Stress as it appears in the data table, the slope should be closer to 0.33, not 1.05. The reason for the inflation is that the model leaves out Time, which is correlated with StressSurvey, so the regression mistakenly shifts part of Time’s effect onto StressSurvey. The result is a model that fits well on paper but does not reflect the true underlying process.
+The regression using StressSurvey produces the equation Anxiety = –1.52 + 1.05 × StressSurvey. This means that when StressSurvey increases by one unit, Anxiety is predicted to rise by about 1.05 units. The intercept of –1.52 implies that if StressSurvey were zero, Anxiety would be negative, which is not realistic but reflects how the line was forced to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is too high. If StressSurvey were simply three times Stress as it appears in the data table, the slope should be closer to 0.33, not 1.05. The reason for the inflation is that the model leaves out Time, which is correlated with StressSurvey, so the regression mistakenly shifts part of Time's effect onto StressSurvey. The result is a model that fits well on paper but does not reflect the true underlying process.
 
+---
 
 ## Question 2: Visualization of Bivariate Relationship
 
@@ -125,9 +128,11 @@ plt.savefig('anxiety_stress_regression.png', dpi=100, bbox_inches='tight')
 plt.close()
 ```
 
+### Scatter Plot Interpretation
+
 ---
 
-**SCATTER PLOT INTERPRETATION:**
+**INTERPRETATION:**
 
 The scatter plot shows a strong linear relationship between StressSurvey and Anxiety with a high R^2 value. Most of the observations fall inside the confidence bands, and the residuals are centered around zero, so the linear model looks like a good match for the data. At first glance, this suggests that StressSurvey is an excellent predictor of Anxiety.
 
@@ -165,11 +170,13 @@ print(f"Time (β₁): {time_coef:.4f}")
 print(f"\nRegression Equation: Anxiety = {intercept_time:.4f} + {time_coef:.4f} × Time")
 ```
 
+### Interpretation
+
 ---
 
 **INTERPRETATION:**
 
-The regression using Time produces the equation Anxiety = –3.68 + 5.34 × Time. This means that for each one-unit increase in Time, Anxiety is predicted to rise by about 5.34 units. The intercept of –3.68 suggests that if Time were zero, Anxiety would be negative, which isn’t realistic but reflects how the line was adjusted to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is far too large. The true effect of Time is only 0.1, but because Stress and Time rise together in this dataset, the regression gives Time credit for Stress’s much stronger effect. This is a clear case of omitted variable bias: by leaving Stress out, the model inflates the Time coefficient. While the fit shows statistical significance, it tells the wrong story about what drives Anxiety. In practice, the model looks convincing but is misleading because it exaggerates Time’s role and ignores the real driver.
+The regression using Time produces the equation Anxiety = –3.68 + 5.34 × Time. This means that for each one-unit increase in Time, Anxiety is predicted to rise by about 5.34 units. The intercept of –3.68 suggests that if Time were zero, Anxiety would be negative, which isn't realistic but reflects how the line was adjusted to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is far too large. The true effect of Time is only 0.1, but because Stress and Time rise together in this dataset, the regression gives Time credit for Stress's much stronger effect. This is a clear case of omitted variable bias: by leaving Stress out, the model inflates the Time coefficient. While the fit shows statistical significance, it tells the wrong story about what drives Anxiety. In practice, the model looks convincing but is misleading because it exaggerates Time's role and ignores the real driver.
 
 ---
 
@@ -213,15 +220,15 @@ plt.savefig('anxiety_time_regression.png', dpi=100, bbox_inches='tight')
 plt.close()
 ```
 
+### Scatter Plot Interpretation
+
 ---
 
-**SCATTER PLOT INTERPRETATION:**
+**INTERPRETATION:**
 
 The scatter plot shows a strong linear relationship between Time and Anxiety with a high R^2 value. Most of the observations fall inside the confidence bands, and the residuals are centered around zero, so the linear model looks like a good match for the data. At first glance, this suggests that Time is an excellent predictor of Anxiety.
 
-However, upon further examination there are some potential issues. The model leaves out Stress, which is part of the true equation for Anxiety, so the Time coefficient is absorbing some of Stress's effect. Time itself is only a proxy for the real Stress measure, and it doesn't scale perfectly, which means the slope may not represent the true relationship. Even though the R² value is very high, that alone doesn't prove the coefficients are correct.
-
-Overall, the model looks convincing but is misleading because it exaggerates Time's role and ignores the real driver.
+However, upon further examination there are some potential issues. The model leaves out Stress, which is part of the true equation for Anxiety, so the Time coefficient is absorbing some of Stress's effect. Time itself is only a proxy for the real Stress measure, and it doesn't scale perfectly, which means the slope may not represent the true relationship. Even though the R² value is very high, that alone doesn't prove the coefficients are correct. Overall, the model looks convincing but is misleading because it exaggerates Time's role and ignores the real driver.
 
 ---
 
@@ -461,18 +468,27 @@ The multiple regression of Anxiety on both Stress and Time gives us Anxiety = 0.
 
 ## Question 7: Comparing the Two Multiple Regression Models
 
+### Model Comparison Analysis
+
 ---
-Both models show really high R-squared values (.935 and 1.00), which means they explain almost all of the changes in Anxiety. But that doesn’t mean the models are actually good. In the model with StressSurvey and Time, the coefficients don’t make much sense since StressSurvey comes out way too big and Time is negative even though it should be positive. The p-values show that the results are statistically significant, but that only means there is a strong pattern in the data, not that the coefficients are actually correct. This problem happens because StressSurvey is only a proxy and also because StressSurvey and Time move together, which messes up the estimates.
+
+**INTERPRETATION:**
+
+Both models show really high R-squared values (.935 and 1.00), which means they explain almost all of the changes in Anxiety. But that doesn't mean the models are actually good. In the model with StressSurvey and Time, the coefficients don't make much sense since StressSurvey comes out way too big and Time is negative even though it should be positive. The p-values show that the results are statistically significant, but that only means there is a strong pattern in the data, not that the coefficients are actually correct. This problem happens because StressSurvey is only a proxy and also because StressSurvey and Time move together, which messes up the estimates.
 
 The model with Stress and Time works better because the coefficients match the true equation, with Stress equal to 1.00 and Time equal to 0.10. These are also statistically significant and actually meaningful.
 
-Overall, this shows that even if a regression has a really high R-squared and very small p-values, that doesn’t mean the model is right. If the wrong variables are used or if they overlap too much, the results can still be misleading. In real-world situations, it is important to use the right variables and not just look at the statistics when making decisions.
+Overall, this shows that even if a regression has a really high R-squared and very small p-values, that doesn't mean the model is right. If the wrong variables are used or if they overlap too much, the results can still be misleading. In real-world situations, it is important to use the right variables and not just look at the statistics when making decisions.
 
 ---
 
 ## Question 8: Reflect on Real-World Implications
 
+### Contrasting Headlines
+
 ---
+
+**INTERPRETATION:**
 
 **For the multiple regression of Anxiety on both StressSurvey and Time**, we could expect to see a headline such as:
 
@@ -482,13 +498,13 @@ Overall, this shows that even if a regression has a really high R-squared and ve
 
 > ### **"Time on Social Media Found to INCREASE Anxiety"**
 
----
-
 **Who Believes Which Headline?**
 
 **A Typical Parent** will likely believe the second headline, as they likely see the negative effects of time on social media on their children. Additionally, the parent will likely be looking for reasons to reduce the time their children spend on social media.
 
 **A Social Media Executive** will likely prefer the first headline, as they can use it to argue that time on social media is a good thing, and that it leads to decreased anxiety.
+
+---
 
 ## Question 9: Avoiding Misleading Statistical Significance
 
@@ -502,7 +518,11 @@ subset_high = observDF[observDF['StressSurvey'] >= 6]
 ### Subsetting Data and Analyzing Patterns
 
 ---
-The data was split into low-stress and high-stress subsets because StressSurvey behaves differently across those ranges. At low levels it scales cleanly as about three times Stress, making it a reliable proxy. At higher levels the survey flattens and no longer tracks Stress proportionally, which distorts the regression. Splitting the sample this way helps reveal where the proxy works and where it breaks down.
+
+**INTERPRETATION:**
+
+I chose to split the data into low-stress and high-stress subsets because StressSurvey behaves differently across those ranges. At low levels it scales cleanly as about three times Stress, making it a good proxy. However, at higher levels the survey flattens and no longer tracks Stress proportionally, which distorts the regression. Splitting the sample this way helps reveal where the proxy works and where it breaks down.
+
 ---
 
 ### Graphical Diagnostics for Linearity
@@ -596,7 +616,10 @@ plt.show()
 
 ---
 
+**INTERPRETATION:**
+
 The residual plots show that in the low-stress subset, the errors are essentially zero across all fitted values, meaning the model fits that part of the data almost perfectly. In the high-stress subset, the residuals spread out above and below zero, showing that the model has trouble capturing the relationship when StressSurvey stops scaling cleanly with Stress. This contrast highlights that the model works well when the proxy is valid but breaks down when the proxy becomes distorted.
+
 ---
 
 ### Multiple Regression: Low Stress Subset (StressSurvey < 6)
@@ -658,7 +681,10 @@ print(f"  Difference in Time coefficient: {model_low.params['Time'] - model_high
 print(f"  Difference in StressSurvey coefficient: {model_low.params['StressSurvey'] - model_high.params['StressSurvey']:.4f}")
 ```
 
----
 ### Interpretation of Coefficient Comparison
+---
+
 
 I wanted to dig a bit deeper into these results and assess the output of the multiple regression. In the low-stress subset, the results came out exactly as hoped. The coefficients are statistically significant and match the true relationship almost perfectly, with StressSurvey at 0.333 (which maps cleanly to a true Stress effect of 1) and Time right at 0.1. That was exciting to see because it shows the model works when the proxy behaves properly. In the high-stress subset, the coefficients are still statistically significant, but they drift far from the truth, with StressSurvey inflated and Time actually flipping negative. Seeing both side by side really highlights that significance on its own can be misleading, while in the right conditions the regression aligns perfectly with the real process.
+
+---

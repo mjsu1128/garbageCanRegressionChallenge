@@ -64,7 +64,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div id="876c9f7e" class="cell" data-execution_count="1">
+<div id="5c7ce388" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-stdout">
 <pre><code>    Stress  StressSurvey  Time  Anxiety
 0        0             0   0.0     0.00
@@ -88,7 +88,7 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="question-1-bivariate-regression-with-stress-survey">Question 1: Bivariate Regression with Stress Survey</h2>
 <section id="regression-of-anxiety-on-stress-survey" class="level3">
 <h3 class="anchored" data-anchor-id="regression-of-anxiety-on-stress-survey">Regression of Anxiety on Stress Survey</h3>
-<div id="a3184ae7" class="cell" data-execution_count="2">
+<div id="771e00f3" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
@@ -96,7 +96,7 @@ Dep. Variable:                Anxiety   R-squared:                       0.901
 Model:                            OLS   Adj. R-squared:                  0.893
 Method:                 Least Squares   F-statistic:                     118.4
 Date:                Tue, 07 Oct 2025   Prob (F-statistic):           6.68e-08
-Time:                        22:06:40   Log-Likelihood:                -27.079
+Time:                        22:12:07   Log-Likelihood:                -27.079
 No. Observations:                  15   AIC:                             58.16
 Df Residuals:                      13   BIC:                             59.57
 Df Model:                           1                                         
@@ -120,7 +120,7 @@ Notes:
 </section>
 <section id="estimated-coefficients" class="level3">
 <h3 class="anchored" data-anchor-id="estimated-coefficients">Estimated Coefficients</h3>
-<div id="56820830" class="cell" data-execution_count="3">
+<div id="e3ed1c2c" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Coefficients:
 Intercept (β₀): -1.5240
@@ -129,16 +129,20 @@ StressSurvey (β₁): 1.0470
 Regression Equation: Anxiety = -1.5240 + 1.0470 × StressSurvey</code></pre>
 </div>
 </div>
+</section>
+<section id="interpretation" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation">Interpretation</h3>
 <hr>
 <p><strong>INTERPRETATION:</strong></p>
 <p>The regression using StressSurvey produces the equation Anxiety = –1.52 + 1.05 × StressSurvey. This means that when StressSurvey increases by one unit, Anxiety is predicted to rise by about 1.05 units. The intercept of –1.52 implies that if StressSurvey were zero, Anxiety would be negative, which is not realistic but reflects how the line was forced to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is too high. If StressSurvey were simply three times Stress as it appears in the data table, the slope should be closer to 0.33, not 1.05. The reason for the inflation is that the model leaves out Time, which is correlated with StressSurvey, so the regression mistakenly shifts part of Time’s effect onto StressSurvey. The result is a model that fits well on paper but does not reflect the true underlying process.</p>
+<hr>
 </section>
 </section>
 <section id="question-2-visualization-of-bivariate-relationship" class="level2">
 <h2 class="anchored" data-anchor-id="question-2-visualization-of-bivariate-relationship">Question 2: Visualization of Bivariate Relationship</h2>
 <section id="scatter-plot-analysis-and-commentary" class="level3">
 <h3 class="anchored" data-anchor-id="scatter-plot-analysis-and-commentary">Scatter Plot Analysis and Commentary</h3>
-<div id="b2ac1440" class="cell" data-execution_count="4">
+<div id="d3340361" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -147,8 +151,11 @@ Regression Equation: Anxiety = -1.5240 + 1.0470 × StressSurvey</code></pre>
 </div>
 </div>
 </div>
+</section>
+<section id="scatter-plot-interpretation" class="level3">
+<h3 class="anchored" data-anchor-id="scatter-plot-interpretation">Scatter Plot Interpretation</h3>
 <hr>
-<p><strong>SCATTER PLOT INTERPRETATION:</strong></p>
+<p><strong>INTERPRETATION:</strong></p>
 <p>The scatter plot shows a strong linear relationship between StressSurvey and Anxiety with a high R^2 value. Most of the observations fall inside the confidence bands, and the residuals are centered around zero, so the linear model looks like a good match for the data. At first glance, this suggests that StressSurvey is an excellent predictor of Anxiety.</p>
 <p>However, upon further examination there are some potential issues. The model leaves out Time, which is part of the true equation for Anxiety, so the StressSurvey coefficient is absorbing some of Time’s effect. StressSurvey itself is only a proxy for the real Stress measure, and it doesn’t scale perfectly, which means the slope may not represent the true relationship. Even though the R² value is very high, that alone doesn’t prove the coefficients are correct.</p>
 <hr>
@@ -158,7 +165,7 @@ Regression Equation: Anxiety = -1.5240 + 1.0470 × StressSurvey</code></pre>
 <h2 class="anchored" data-anchor-id="question-3-bivariate-regression-of-anxiety-on-time">Question 3: Bivariate Regression of Anxiety on Time</h2>
 <section id="regression-of-anxiety-on-time" class="level3">
 <h3 class="anchored" data-anchor-id="regression-of-anxiety-on-time">Regression of Anxiety on Time</h3>
-<div id="77a3880e" class="cell" data-execution_count="5">
+<div id="ac4e234b" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
@@ -166,7 +173,7 @@ Dep. Variable:                Anxiety   R-squared:                       0.563
 Model:                            OLS   Adj. R-squared:                  0.529
 Method:                 Least Squares   F-statistic:                     16.75
 Date:                Tue, 07 Oct 2025   Prob (F-statistic):            0.00127
-Time:                        22:06:41   Log-Likelihood:                -38.223
+Time:                        22:12:08   Log-Likelihood:                -38.223
 No. Observations:                  15   AIC:                             80.45
 Df Residuals:                      13   BIC:                             81.86
 Df Model:                           1                                         
@@ -190,7 +197,7 @@ Notes:
 </section>
 <section id="estimated-coefficients-for-time-model" class="level3">
 <h3 class="anchored" data-anchor-id="estimated-coefficients-for-time-model">Estimated Coefficients for Time Model</h3>
-<div id="4b3cd0d0" class="cell" data-execution_count="6">
+<div id="37a52d3f" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Coefficients (Anxiety ~ Time):
 ======================================
@@ -200,6 +207,9 @@ Time (β₁): 5.3406
 Regression Equation: Anxiety = -3.6801 + 5.3406 × Time</code></pre>
 </div>
 </div>
+</section>
+<section id="interpretation-1" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-1">Interpretation</h3>
 <hr>
 <p><strong>INTERPRETATION:</strong></p>
 <p>The regression using Time produces the equation Anxiety = –3.68 + 5.34 × Time. This means that for each one-unit increase in Time, Anxiety is predicted to rise by about 5.34 units. The intercept of –3.68 suggests that if Time were zero, Anxiety would be negative, which isn’t realistic but reflects how the line was adjusted to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is far too large. The true effect of Time is only 0.1, but because Stress and Time rise together in this dataset, the regression gives Time credit for Stress’s much stronger effect. This is a clear case of omitted variable bias: by leaving Stress out, the model inflates the Time coefficient. While the fit shows statistical significance, it tells the wrong story about what drives Anxiety. In practice, the model looks convincing but is misleading because it exaggerates Time’s role and ignores the real driver.</p>
@@ -210,7 +220,7 @@ Regression Equation: Anxiety = -3.6801 + 5.3406 × Time</code></pre>
 <h2 class="anchored" data-anchor-id="question-4-visualization-of-bivariate-relationship">Question 4: Visualization of Bivariate Relationship</h2>
 <section id="scatter-plot-anxiety-vs-time" class="level3">
 <h3 class="anchored" data-anchor-id="scatter-plot-anxiety-vs-time">Scatter Plot: Anxiety vs Time</h3>
-<div id="1d96d65a" class="cell" data-execution_count="7">
+<div id="ccec2248" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -219,11 +229,13 @@ Regression Equation: Anxiety = -3.6801 + 5.3406 × Time</code></pre>
 </div>
 </div>
 </div>
+</section>
+<section id="scatter-plot-interpretation-1" class="level3">
+<h3 class="anchored" data-anchor-id="scatter-plot-interpretation-1">Scatter Plot Interpretation</h3>
 <hr>
-<p><strong>SCATTER PLOT INTERPRETATION:</strong></p>
+<p><strong>INTERPRETATION:</strong></p>
 <p>The scatter plot shows a strong linear relationship between Time and Anxiety with a high R^2 value. Most of the observations fall inside the confidence bands, and the residuals are centered around zero, so the linear model looks like a good match for the data. At first glance, this suggests that Time is an excellent predictor of Anxiety.</p>
-<p>However, upon further examination there are some potential issues. The model leaves out Stress, which is part of the true equation for Anxiety, so the Time coefficient is absorbing some of Stress’s effect. Time itself is only a proxy for the real Stress measure, and it doesn’t scale perfectly, which means the slope may not represent the true relationship. Even though the R² value is very high, that alone doesn’t prove the coefficients are correct.</p>
-<p>Overall, the model looks convincing but is misleading because it exaggerates Time’s role and ignores the real driver.</p>
+<p>However, upon further examination there are some potential issues. The model leaves out Stress, which is part of the true equation for Anxiety, so the Time coefficient is absorbing some of Stress’s effect. Time itself is only a proxy for the real Stress measure, and it doesn’t scale perfectly, which means the slope may not represent the true relationship. Even though the R² value is very high, that alone doesn’t prove the coefficients are correct. Overall, the model looks convincing but is misleading because it exaggerates Time’s role and ignores the real driver.</p>
 <hr>
 </section>
 </section>
@@ -231,7 +243,7 @@ Regression Equation: Anxiety = -3.6801 + 5.3406 × Time</code></pre>
 <h2 class="anchored" data-anchor-id="question-5-multiple-regression-of-anxiety-on-stresssurvey-and-time">Question 5: Multiple Regression of Anxiety on StressSurvey and Time</h2>
 <section id="multiple-regression-model" class="level3">
 <h3 class="anchored" data-anchor-id="multiple-regression-model">Multiple Regression Model</h3>
-<div id="88a96adc" class="cell" data-execution_count="8">
+<div id="a7814119" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
@@ -239,7 +251,7 @@ Dep. Variable:                Anxiety   R-squared:                       0.935
 Model:                            OLS   Adj. R-squared:                  0.924
 Method:                 Least Squares   F-statistic:                     86.32
 Date:                Tue, 07 Oct 2025   Prob (F-statistic):           7.54e-08
-Time:                        22:06:41   Log-Likelihood:                -23.931
+Time:                        22:12:08   Log-Likelihood:                -23.931
 No. Observations:                  15   AIC:                             53.86
 Df Residuals:                      12   BIC:                             55.99
 Df Model:                           2                                         
@@ -264,7 +276,7 @@ Notes:
 </section>
 <section id="estimated-coefficients-for-multiple-regression" class="level3">
 <h3 class="anchored" data-anchor-id="estimated-coefficients-for-multiple-regression">Estimated Coefficients for Multiple Regression</h3>
-<div id="0de2232d" class="cell" data-execution_count="9">
+<div id="382e1efb" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Coefficients (Anxiety ~ StressSurvey + Time):
 =====================================================
@@ -278,7 +290,7 @@ Regression Equation: Anxiety = 0.5888 + 1.4269 × StressSurvey + -2.7799 × Time
 </section>
 <section id="scatter-plot-multiple-regression-visualization" class="level3">
 <h3 class="anchored" data-anchor-id="scatter-plot-multiple-regression-visualization">Scatter Plot: Multiple Regression Visualization</h3>
-<div id="8377c000" class="cell" data-execution_count="10">
+<div id="1f6284b9" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -304,7 +316,7 @@ Regression Equation: Anxiety = 0.5888 + 1.4269 × StressSurvey + -2.7799 × Time
 <h2 class="anchored" data-anchor-id="multiple-regression-of-anxiety-on-stress-and-time">Multiple Regression of Anxiety on Stress and Time</h2>
 <section id="multiple-regression-model-using-actual-stress" class="level3">
 <h3 class="anchored" data-anchor-id="multiple-regression-model-using-actual-stress">Multiple Regression Model (Using Actual Stress)</h3>
-<div id="9a2ce2d4" class="cell" data-execution_count="11">
+<div id="2f7a2e46" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
@@ -312,7 +324,7 @@ Dep. Variable:                Anxiety   R-squared:                       1.000
 Model:                            OLS   Adj. R-squared:                  1.000
 Method:                 Least Squares   F-statistic:                 2.891e+32
 Date:                Tue, 07 Oct 2025   Prob (F-statistic):          8.00e-191
-Time:                        22:06:43   Log-Likelihood:                 502.71
+Time:                        22:12:10   Log-Likelihood:                 502.71
 No. Observations:                  15   AIC:                            -999.4
 Df Residuals:                      12   BIC:                            -997.3
 Df Model:                           2                                         
@@ -337,7 +349,7 @@ Notes:
 </section>
 <section id="estimated-coefficients-stress-time-model" class="level3">
 <h3 class="anchored" data-anchor-id="estimated-coefficients-stress-time-model">Estimated Coefficients (Stress + Time Model)</h3>
-<div id="e8b10b88" class="cell" data-execution_count="12">
+<div id="3a1a6051" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Coefficients (Anxiety ~ Stress + Time):
 ================================================
@@ -351,7 +363,7 @@ Regression Equation: Anxiety = -0.0000 + 1.0000 × Stress + 0.1000 × Time</code
 </section>
 <section id="scatter-plot-multiple-regression-visualization-stress-time-model" class="level3">
 <h3 class="anchored" data-anchor-id="scatter-plot-multiple-regression-visualization-stress-time-model">Scatter Plot: Multiple Regression Visualization (Stress + Time Model)</h3>
-<div id="e86c3715" class="cell" data-execution_count="13">
+<div id="2248e516" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -378,15 +390,22 @@ Regression Equation: Anxiety = -0.0000 + 1.0000 × Stress + 0.1000 × Time</code
 </section>
 <section id="question-7-comparing-the-two-multiple-regression-models" class="level2">
 <h2 class="anchored" data-anchor-id="question-7-comparing-the-two-multiple-regression-models">Question 7: Comparing the Two Multiple Regression Models</h2>
+<section id="model-comparison-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="model-comparison-analysis">Model Comparison Analysis</h3>
 <hr>
+<p><strong>INTERPRETATION:</strong></p>
 <p>Both models show really high R-squared values (.935 and 1.00), which means they explain almost all of the changes in Anxiety. But that doesn’t mean the models are actually good. In the model with StressSurvey and Time, the coefficients don’t make much sense since StressSurvey comes out way too big and Time is negative even though it should be positive. The p-values show that the results are statistically significant, but that only means there is a strong pattern in the data, not that the coefficients are actually correct. This problem happens because StressSurvey is only a proxy and also because StressSurvey and Time move together, which messes up the estimates.</p>
 <p>The model with Stress and Time works better because the coefficients match the true equation, with Stress equal to 1.00 and Time equal to 0.10. These are also statistically significant and actually meaningful.</p>
 <p>Overall, this shows that even if a regression has a really high R-squared and very small p-values, that doesn’t mean the model is right. If the wrong variables are used or if they overlap too much, the results can still be misleading. In real-world situations, it is important to use the right variables and not just look at the statistics when making decisions.</p>
 <hr>
 </section>
+</section>
 <section id="question-8-reflect-on-real-world-implications" class="level2">
 <h2 class="anchored" data-anchor-id="question-8-reflect-on-real-world-implications">Question 8: Reflect on Real-World Implications</h2>
+<section id="contrasting-headlines" class="level3">
+<h3 class="anchored" data-anchor-id="contrasting-headlines">Contrasting Headlines</h3>
 <hr>
+<p><strong>INTERPRETATION:</strong></p>
 <p><strong>For the multiple regression of Anxiety on both StressSurvey and Time</strong>, we could expect to see a headline such as:</p>
 <blockquote class="blockquote">
 <h3 id="time-on-social-media-found-to-decrease-anxiety" class="anchored"><strong>“Time on Social Media Found to DECREASE Anxiety”</strong></h3>
@@ -395,26 +414,24 @@ Regression Equation: Anxiety = -0.0000 + 1.0000 × Stress + 0.1000 × Time</code
 <blockquote class="blockquote">
 <h3 id="time-on-social-media-found-to-increase-anxiety" class="anchored"><strong>“Time on Social Media Found to INCREASE Anxiety”</strong></h3>
 </blockquote>
-<hr>
 <p><strong>Who Believes Which Headline?</strong></p>
 <p><strong>A Typical Parent</strong> will likely believe the second headline, as they likely see the negative effects of time on social media on their children. Additionally, the parent will likely be looking for reasons to reduce the time their children spend on social media.</p>
 <p><strong>A Social Media Executive</strong> will likely prefer the first headline, as they can use it to argue that time on social media is a good thing, and that it leads to decreased anxiety.</p>
+<hr>
+</section>
 </section>
 <section id="question-9-avoiding-misleading-statistical-significance" class="level2">
 <h2 class="anchored" data-anchor-id="question-9-avoiding-misleading-statistical-significance">Question 9: Avoiding Misleading Statistical Significance</h2>
 <section id="subsetting-data-and-analyzing-patterns" class="level3">
 <h3 class="anchored" data-anchor-id="subsetting-data-and-analyzing-patterns">Subsetting Data and Analyzing Patterns</h3>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td>The data was split into low-stress and high-stress subsets because StressSurvey behaves differently across those ranges. At low levels it scales cleanly as about three times Stress, making it a reliable proxy. At higher levels the survey flattens and no longer tracks Stress proportionally, which distorts the regression. Splitting the sample this way helps reveal where the proxy works and where it breaks down.</td>
-</tr>
-</tbody>
-</table>
+<hr>
+<p><strong>INTERPRETATION:</strong></p>
+<p>I chose to split the data into low-stress and high-stress subsets because StressSurvey behaves differently across those ranges. At low levels it scales cleanly as about three times Stress, making it a good proxy. However, at higher levels the survey flattens and no longer tracks Stress proportionally, which distorts the regression. Splitting the sample this way helps reveal where the proxy works and where it breaks down.</p>
+<hr>
 </section>
 <section id="graphical-diagnostics-for-linearity" class="level3">
 <h3 class="anchored" data-anchor-id="graphical-diagnostics-for-linearity">Graphical Diagnostics for Linearity</h3>
-<div id="3b7478eb" class="cell" data-execution_count="15">
+<div id="231bd85a" class="cell" data-execution_count="15">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -427,13 +444,13 @@ Regression Equation: Anxiety = -0.0000 + 1.0000 × Stress + 0.1000 × Time</code
 <section id="interpretation-of-linearity-diagnostics" class="level3">
 <h3 class="anchored" data-anchor-id="interpretation-of-linearity-diagnostics">Interpretation of Linearity Diagnostics</h3>
 <hr>
+<p><strong>INTERPRETATION:</strong></p>
+<p>The residual plots show that in the low-stress subset, the errors are essentially zero across all fitted values, meaning the model fits that part of the data almost perfectly. In the high-stress subset, the residuals spread out above and below zero, showing that the model has trouble capturing the relationship when StressSurvey stops scaling cleanly with Stress. This contrast highlights that the model works well when the proxy is valid but breaks down when the proxy becomes distorted.</p>
+<hr>
 </section>
-</section>
-<section id="the-residual-plots-show-that-in-the-low-stress-subset-the-errors-are-essentially-zero-across-all-fitted-values-meaning-the-model-fits-that-part-of-the-data-almost-perfectly.-in-the-high-stress-subset-the-residuals-spread-out-above-and-below-zero-showing-that-the-model-has-trouble-capturing-the-relationship-when-stresssurvey-stops-scaling-cleanly-with-stress.-this-contrast-highlights-that-the-model-works-well-when-the-proxy-is-valid-but-breaks-down-when-the-proxy-becomes-distorted." class="level2">
-<h2 class="anchored" data-anchor-id="the-residual-plots-show-that-in-the-low-stress-subset-the-errors-are-essentially-zero-across-all-fitted-values-meaning-the-model-fits-that-part-of-the-data-almost-perfectly.-in-the-high-stress-subset-the-residuals-spread-out-above-and-below-zero-showing-that-the-model-has-trouble-capturing-the-relationship-when-stresssurvey-stops-scaling-cleanly-with-stress.-this-contrast-highlights-that-the-model-works-well-when-the-proxy-is-valid-but-breaks-down-when-the-proxy-becomes-distorted.">The residual plots show that in the low-stress subset, the errors are essentially zero across all fitted values, meaning the model fits that part of the data almost perfectly. In the high-stress subset, the residuals spread out above and below zero, showing that the model has trouble capturing the relationship when StressSurvey stops scaling cleanly with Stress. This contrast highlights that the model works well when the proxy is valid but breaks down when the proxy becomes distorted.</h2>
 <section id="multiple-regression-low-stress-subset-stresssurvey-6" class="level3">
 <h3 class="anchored" data-anchor-id="multiple-regression-low-stress-subset-stresssurvey-6">Multiple Regression: Low Stress Subset (StressSurvey &lt; 6)</h3>
-<div id="289e288b" class="cell" data-execution_count="16">
+<div id="0e59a476" class="cell" data-execution_count="16">
 <div class="cell-output cell-output-stdout">
 <pre><code>MULTIPLE REGRESSION: Low Stress Subset (StressSurvey &lt; 6)
 ======================================================================
@@ -446,7 +463,7 @@ Dep. Variable:                Anxiety   R-squared:                       1.000
 Model:                            OLS   Adj. R-squared:                  1.000
 Method:                 Least Squares   F-statistic:                 5.793e+30
 Date:                Tue, 07 Oct 2025   Prob (F-statistic):           1.32e-46
-Time:                        22:06:48   Log-Likelihood:                 206.72
+Time:                        22:12:14   Log-Likelihood:                 206.72
 No. Observations:                   6   AIC:                            -407.4
 Df Residuals:                       3   BIC:                            -408.1
 Df Model:                           2                                         
@@ -475,7 +492,7 @@ Notes:
 </section>
 <section id="multiple-regression-high-stress-subset-stresssurvey-6" class="level3">
 <h3 class="anchored" data-anchor-id="multiple-regression-high-stress-subset-stresssurvey-6">Multiple Regression: High Stress Subset (StressSurvey &gt;= 6)</h3>
-<div id="8ed2a555" class="cell" data-execution_count="17">
+<div id="288f8275" class="cell" data-execution_count="17">
 <div class="cell-output cell-output-stdout">
 <pre><code>MULTIPLE REGRESSION: High Stress Subset (StressSurvey &gt;= 6)
 ======================================================================
@@ -488,7 +505,7 @@ Dep. Variable:                Anxiety   R-squared:                       0.994
 Model:                            OLS   Adj. R-squared:                  0.993
 Method:                 Least Squares   F-statistic:                     531.0
 Date:                Tue, 07 Oct 2025   Prob (F-statistic):           1.77e-07
-Time:                        22:06:48   Log-Likelihood:                -2.1893
+Time:                        22:12:14   Log-Likelihood:                -2.1893
 No. Observations:                   9   AIC:                             10.38
 Df Residuals:                       6   BIC:                             10.97
 Df Model:                           2                                         
@@ -513,7 +530,7 @@ Notes:
 </section>
 <section id="comparison-of-coefficients" class="level3">
 <h3 class="anchored" data-anchor-id="comparison-of-coefficients">Comparison of Coefficients</h3>
-<div id="0aff7a3c" class="cell" data-execution_count="18">
+<div id="e3f45cbc" class="cell" data-execution_count="18">
 <div class="cell-output cell-output-stdout">
 <pre><code>COEFFICIENT COMPARISON BETWEEN SUBSETS:
 ======================================================================
@@ -536,12 +553,12 @@ KEY OBSERVATIONS:
   Difference in StressSurvey coefficient: -1.6190</code></pre>
 </div>
 </div>
-<hr>
 </section>
-<section id="interpretation-of-coefficient-comparison" class="level3">
-<h3 class="anchored" data-anchor-id="interpretation-of-coefficient-comparison">Interpretation of Coefficient Comparison</h3>
+</section>
+<section id="interpretation-of-coefficient-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-of-coefficient-comparison">### Interpretation of Coefficient Comparison</h2>
 <p>I wanted to dig a bit deeper into these results and assess the output of the multiple regression. In the low-stress subset, the results came out exactly as hoped. The coefficients are statistically significant and match the true relationship almost perfectly, with StressSurvey at 0.333 (which maps cleanly to a true Stress effect of 1) and Time right at 0.1. That was exciting to see because it shows the model works when the proxy behaves properly. In the high-stress subset, the coefficients are still statistically significant, but they drift far from the truth, with StressSurvey inflated and Time actually flipping negative. Seeing both side by side really highlights that significance on its own can be misleading, while in the right conditions the regression aligns perfectly with the real process.</p>
-</section>
+<hr>
 </section>
 
 </main>
