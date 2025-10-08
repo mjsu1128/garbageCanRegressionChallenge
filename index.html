@@ -64,7 +64,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div id="dc47500d" class="cell" data-execution_count="1">
+<div id="bb63e0e0" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-stdout">
 <pre><code>    Stress  StressSurvey  Time  Anxiety
 0        0             0   0.0     0.00
@@ -84,9 +84,11 @@ ul.task-list li input[type="checkbox"] {
 14      12            12   2.2    12.22</code></pre>
 </div>
 </div>
+<section id="question-1-bivariate-regression-with-stress-survey" class="level2">
+<h2 class="anchored" data-anchor-id="question-1-bivariate-regression-with-stress-survey">Question 1: Bivariate Regression with Stress Survey</h2>
 <section id="regression-of-anxiety-on-stress-survey" class="level3">
 <h3 class="anchored" data-anchor-id="regression-of-anxiety-on-stress-survey">Regression of Anxiety on Stress Survey</h3>
-<div id="39d1697f" class="cell" data-execution_count="2">
+<div id="92c71730" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
@@ -94,7 +96,7 @@ Dep. Variable:                Anxiety   R-squared:                       0.901
 Model:                            OLS   Adj. R-squared:                  0.893
 Method:                 Least Squares   F-statistic:                     118.4
 Date:                Tue, 07 Oct 2025   Prob (F-statistic):           6.68e-08
-Time:                        21:11:15   Log-Likelihood:                -27.079
+Time:                        21:27:10   Log-Likelihood:                -27.079
 No. Observations:                  15   AIC:                             58.16
 Df Residuals:                      13   BIC:                             59.57
 Df Model:                           1                                         
@@ -118,7 +120,7 @@ Notes:
 </section>
 <section id="estimated-coefficients" class="level3">
 <h3 class="anchored" data-anchor-id="estimated-coefficients">Estimated Coefficients</h3>
-<div id="3b1bce1e" class="cell" data-execution_count="3">
+<div id="329692e0" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Coefficients:
 Intercept (β₀): -1.5240
@@ -131,9 +133,12 @@ Regression Equation: Anxiety = -1.5240 + 1.0470 × StressSurvey</code></pre>
 <p><strong>INTERPRETATION:</strong></p>
 <p>The regression using StressSurvey produces the equation Anxiety = –1.52 + 1.05 × StressSurvey. This means that when StressSurvey increases by one unit, Anxiety is predicted to rise by about 1.05 units. The intercept of –1.52 implies that if StressSurvey were zero, Anxiety would be negative, which is not realistic but reflects how the line was forced to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is too high. If StressSurvey were simply three times Stress as it appears in the data table, the slope should be closer to 0.33, not 1.05. The reason for the inflation is that the model leaves out Time, which is correlated with StressSurvey, so the regression mistakenly shifts part of Time’s effect onto StressSurvey. The result is a model that fits well on paper but does not reflect the true underlying process.</p>
 </section>
+</section>
+<section id="question-2-visualization-of-bivariate-relationship" class="level2">
+<h2 class="anchored" data-anchor-id="question-2-visualization-of-bivariate-relationship">Question 2: Visualization of Bivariate Relationship</h2>
 <section id="scatter-plot-analysis-and-commentary" class="level3">
 <h3 class="anchored" data-anchor-id="scatter-plot-analysis-and-commentary">Scatter Plot Analysis and Commentary</h3>
-<div id="9da3035b" class="cell" data-execution_count="4">
+<div id="03d6c63c" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -142,51 +147,18 @@ Regression Equation: Anxiety = -1.5240 + 1.0470 × StressSurvey</code></pre>
 </div>
 </div>
 </div>
-</section>
-<section id="fit-assessment-and-commentary" class="level3">
-<h3 class="anchored" data-anchor-id="fit-assessment-and-commentary">Fit Assessment and Commentary</h3>
-<div id="4b55b9a9" class="cell" data-execution_count="5">
-<div class="cell-output cell-output-stdout">
-<pre><code>REGRESSION FIT ANALYSIS:
-========================
-
-1. GOODNESS OF FIT:
-   R-squared: 0.9011 (90.1% of variance explained)
-   Adjusted R-squared: 0.8935
-   ✓ Excellent fit - model explains most of the variance
-
-2. STATISTICAL SIGNIFICANCE:
-   F-statistic: 118.4474
-   p-value: 0.000000
-   ✓ Highly significant relationship (p &lt; 0.001)
-
-3. COEFFICIENT SIGNIFICANCE:
-   StressSurvey coefficient p-value: 0.000000
-   ✓ StressSurvey coefficient is statistically significant
-
-4. POTENTIAL ISSUES:
-   • Omitted variable bias: Time variable is missing from the model
-   • Variable scaling: Using StressSurvey instead of true Stress variable
-   • Small sample size: Only 15 observations
-   • Perfect linear relationship: Data appears artificially generated
-
-5. RESIDUAL ANALYSIS:
-   Mean of residuals: 0.000000 (should be ~0)
-   Standard deviation of residuals: 1.5233
-   ✓ Residuals centered around zero</code></pre>
-</div>
-</div>
 <hr>
 <p><strong>SCATTER PLOT INTERPRETATION:</strong></p>
 <p>The scatter plot shows a strong linear relationship between StressSurvey and Anxiety with a high R^2 value. Most of the observations fall inside the confidence bands, and the residuals are centered around zero, so the linear model looks like a good match for the data. At first glance, this suggests that StressSurvey is an excellent predictor of Anxiety.</p>
 <p>However, upon further examination there are some potential issues. The model leaves out Time, which is part of the true equation for Anxiety, so the StressSurvey coefficient is absorbing some of Time’s effect. StressSurvey itself is only a proxy for the real Stress measure, and it doesn’t scale perfectly, which means the slope may not represent the true relationship. Even though the R² value is very high, that alone doesn’t prove the coefficients are correct.</p>
 <hr>
 </section>
+</section>
 <section id="question-3-bivariate-regression-of-anxiety-on-time" class="level2">
 <h2 class="anchored" data-anchor-id="question-3-bivariate-regression-of-anxiety-on-time">Question 3: Bivariate Regression of Anxiety on Time</h2>
 <section id="regression-of-anxiety-on-time" class="level3">
 <h3 class="anchored" data-anchor-id="regression-of-anxiety-on-time">Regression of Anxiety on Time</h3>
-<div id="3ab640a1" class="cell" data-execution_count="6">
+<div id="6acadb04" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
@@ -194,7 +166,7 @@ Dep. Variable:                Anxiety   R-squared:                       0.563
 Model:                            OLS   Adj. R-squared:                  0.529
 Method:                 Least Squares   F-statistic:                     16.75
 Date:                Tue, 07 Oct 2025   Prob (F-statistic):            0.00127
-Time:                        21:11:16   Log-Likelihood:                -38.223
+Time:                        21:27:10   Log-Likelihood:                -38.223
 No. Observations:                  15   AIC:                             80.45
 Df Residuals:                      13   BIC:                             81.86
 Df Model:                           1                                         
@@ -218,7 +190,7 @@ Notes:
 </section>
 <section id="estimated-coefficients-for-time-model" class="level3">
 <h3 class="anchored" data-anchor-id="estimated-coefficients-for-time-model">Estimated Coefficients for Time Model</h3>
-<div id="336451e9" class="cell" data-execution_count="7">
+<div id="2016244e" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Coefficients (Anxiety ~ Time):
 ======================================
@@ -233,13 +205,16 @@ Regression Equation: Anxiety = -3.6801 + 5.3406 × Time</code></pre>
 <p>The regression using Time produces the equation Anxiety = –3.68 + 5.34 × Time. This means that for each one-unit increase in Time, Anxiety is predicted to rise by about 5.34 units. The intercept of –3.68 suggests that if Time were zero, Anxiety would be negative, which isn’t realistic but reflects how the line was adjusted to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is far too large. The true effect of Time is only 0.1, but because Stress and Time rise together in this dataset, the regression gives Time credit for Stress’s much stronger effect. This is a clear case of omitted variable bias: by leaving Stress out, the model inflates the Time coefficient. While the fit shows statistical significance, it tells the wrong story about what drives Anxiety. In practice, the model looks convincing but is misleading because it exaggerates Time’s role and ignores the real driver.</p>
 <hr>
 </section>
+</section>
+<section id="question-4-visualization-of-bivariate-relationship" class="level2">
+<h2 class="anchored" data-anchor-id="question-4-visualization-of-bivariate-relationship">Question 4: Visualization of Bivariate Relationship</h2>
 <section id="scatter-plot-anxiety-vs-time" class="level3">
 <h3 class="anchored" data-anchor-id="scatter-plot-anxiety-vs-time">Scatter Plot: Anxiety vs Time</h3>
-<div id="5fdcf96f" class="cell" data-execution_count="8">
+<div id="d45287e3" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-9-output-1.png" width="758" height="567" class="figure-img"></p>
+<p><img src="index_files/figure-html/cell-8-output-1.png" width="758" height="567" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -256,7 +231,7 @@ Regression Equation: Anxiety = -3.6801 + 5.3406 × Time</code></pre>
 <h2 class="anchored" data-anchor-id="question-5-multiple-regression-of-anxiety-on-stresssurvey-and-time">Question 5: Multiple Regression of Anxiety on StressSurvey and Time</h2>
 <section id="multiple-regression-model" class="level3">
 <h3 class="anchored" data-anchor-id="multiple-regression-model">Multiple Regression Model</h3>
-<div id="8766409b" class="cell" data-execution_count="9">
+<div id="6c817643" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
@@ -264,7 +239,7 @@ Dep. Variable:                Anxiety   R-squared:                       0.935
 Model:                            OLS   Adj. R-squared:                  0.924
 Method:                 Least Squares   F-statistic:                     86.32
 Date:                Tue, 07 Oct 2025   Prob (F-statistic):           7.54e-08
-Time:                        21:11:16   Log-Likelihood:                -23.931
+Time:                        21:27:11   Log-Likelihood:                -23.931
 No. Observations:                  15   AIC:                             53.86
 Df Residuals:                      12   BIC:                             55.99
 Df Model:                           2                                         
@@ -289,7 +264,7 @@ Notes:
 </section>
 <section id="estimated-coefficients-for-multiple-regression" class="level3">
 <h3 class="anchored" data-anchor-id="estimated-coefficients-for-multiple-regression">Estimated Coefficients for Multiple Regression</h3>
-<div id="7f6423e5" class="cell" data-execution_count="10">
+<div id="035887bb" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Coefficients (Anxiety ~ StressSurvey + Time):
 =====================================================
@@ -303,11 +278,11 @@ Regression Equation: Anxiety = 0.5888 + 1.4269 × StressSurvey + -2.7799 × Time
 </section>
 <section id="scatter-plot-multiple-regression-visualization" class="level3">
 <h3 class="anchored" data-anchor-id="scatter-plot-multiple-regression-visualization">Scatter Plot: Multiple Regression Visualization</h3>
-<div id="ffeca860" class="cell" data-execution_count="11">
+<div id="6dc79e29" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-12-output-1.png" width="1500" height="468" class="figure-img"></p>
+<p><img src="index_files/figure-html/cell-11-output-1.png" width="1500" height="468" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -329,7 +304,7 @@ Regression Equation: Anxiety = 0.5888 + 1.4269 × StressSurvey + -2.7799 × Time
 <h2 class="anchored" data-anchor-id="multiple-regression-of-anxiety-on-stress-and-time">Multiple Regression of Anxiety on Stress and Time</h2>
 <section id="multiple-regression-model-using-actual-stress" class="level3">
 <h3 class="anchored" data-anchor-id="multiple-regression-model-using-actual-stress">Multiple Regression Model (Using Actual Stress)</h3>
-<div id="9942b324" class="cell" data-execution_count="12">
+<div id="060a1157" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
@@ -337,7 +312,7 @@ Dep. Variable:                Anxiety   R-squared:                       1.000
 Model:                            OLS   Adj. R-squared:                  1.000
 Method:                 Least Squares   F-statistic:                 2.891e+32
 Date:                Tue, 07 Oct 2025   Prob (F-statistic):          8.00e-191
-Time:                        21:11:18   Log-Likelihood:                 502.71
+Time:                        21:27:12   Log-Likelihood:                 502.71
 No. Observations:                  15   AIC:                            -999.4
 Df Residuals:                      12   BIC:                            -997.3
 Df Model:                           2                                         
@@ -362,7 +337,7 @@ Notes:
 </section>
 <section id="estimated-coefficients-stress-time-model" class="level3">
 <h3 class="anchored" data-anchor-id="estimated-coefficients-stress-time-model">Estimated Coefficients (Stress + Time Model)</h3>
-<div id="44d789a4" class="cell" data-execution_count="13">
+<div id="f6f2aac1" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-stdout">
 <pre><code>Estimated Coefficients (Anxiety ~ Stress + Time):
 ================================================
@@ -374,6 +349,33 @@ Regression Equation: Anxiety = -0.0000 + 1.0000 × Stress + 0.1000 × Time</code
 </div>
 </div>
 </section>
+<section id="scatter-plot-multiple-regression-visualization-stress-time-model" class="level3">
+<h3 class="anchored" data-anchor-id="scatter-plot-multiple-regression-visualization-stress-time-model">Scatter Plot: Multiple Regression Visualization (Stress + Time Model)</h3>
+<div id="2a989f72" class="cell" data-execution_count="13">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-14-output-1.png" width="1502" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+✓ Stress + Time multiple regression visualization saved as 'stress_time_multiple_regression.png'</code></pre>
+</div>
+</div>
+<hr>
+<p><strong>SCATTER PLOT INTERPRETATION:</strong></p>
+<p>The visualizations for the Anxiety ~ Stress + Time model demonstrate the near-perfect recovery of the true data-generating process:</p>
+<p><strong>3D Scatter Plot:</strong> The three-dimensional visualization shows how Anxiety relates to both Stress and Time using the TRUE variables from the data generation process. The regression plane (in red) fits the observed data points (in green) almost perfectly. The plane’s steep rise with Stress (slope = 1.00) and gentle rise with Time (slope = 0.10) exactly match the true relationship: Anxiety = Stress + 0.1 × Time.</p>
+<p><strong>Actual vs Fitted Values:</strong> The points fall almost exactly on the 45-degree perfect prediction line, indicating that the model’s predictions are virtually identical to the actual Anxiety values. This near-perfect alignment confirms that when we use the correct variables (Stress and Time, not proxies), the model captures the true relationship with essentially no bias.</p>
+<p><strong>Residuals Plot:</strong> The residuals are extremely small and randomly scattered around zero with no discernible pattern. This confirms that all model assumptions are satisfied: the relationship is truly linear, the variance is constant, and there are no omitted variables causing systematic errors. The tiny residuals reflect the fact that our model equation matches the data-generating equation.</p>
+<p><strong>Key Insight:</strong> This visualization demonstrates the power of multiple regression when the correct variables are used. Unlike the StressSurvey + Time model (which suffered from using a proxy variable), this Stress + Time model perfectly recovers the true coefficients because it uses the actual variables from the data generation process. This is the gold standard result—what we hope to achieve in practice, though real-world data rarely provides such clean results.</p>
+<hr>
+</section>
+</section>
+<section id="question-6-model-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="question-6-model-comparison">Question 6: Model Comparison</h2>
 <section id="comparison-with-true-relationship-perfect-match-expected" class="level3">
 <h3 class="anchored" data-anchor-id="comparison-with-true-relationship-perfect-match-expected">Comparison with True Relationship (Perfect Match Expected!)</h3>
 <hr>
@@ -405,6 +407,9 @@ Regression Equation: Anxiety = -0.0000 + 1.0000 × Stress + 0.1000 × Time</code
 <p><strong>Who Believes Which Headline?</strong></p>
 <p><strong>A Typical Parent</strong> will likely believe the second headline, as they likely see the negative effects of time on social media on their children. Additionally, the parent will likely be looking for reasons to reduce the time their children spend on social media.</p>
 <p><strong>A Social Media Executive</strong> will likely prefer the first headline, as they can use it to argue that time on social media is a good thing, and that it leads to decreased anxiety.</p>
+</section>
+<section id="question-9-avoiding-misleading-statistical-significance" class="level2">
+<h2 class="anchored" data-anchor-id="question-9-avoiding-misleading-statistical-significance">Question 9: Avoiding Misleading Statistical Significance</h2>
 </section>
 
 </main>

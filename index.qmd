@@ -30,6 +30,8 @@ observDF = pd.DataFrame(data)
 print(observDF)
 ```
 
+## Question 1: Bivariate Regression with Stress Survey
+
 ### Regression of Anxiety on Stress Survey
 
 ```{python}
@@ -68,6 +70,7 @@ print(f"\nRegression Equation: Anxiety = {intercept:.4f} + {stress_coef:.4f} × 
 The regression using StressSurvey produces the equation Anxiety = –1.52 + 1.05 × StressSurvey. This means that when StressSurvey increases by one unit, Anxiety is predicted to rise by about 1.05 units. The intercept of –1.52 implies that if StressSurvey were zero, Anxiety would be negative, which is not realistic but reflects how the line was forced to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is too high. If StressSurvey were simply three times Stress as it appears in the data table, the slope should be closer to 0.33, not 1.05. The reason for the inflation is that the model leaves out Time, which is correlated with StressSurvey, so the regression mistakenly shifts part of Time’s effect onto StressSurvey. The result is a model that fits well on paper but does not reflect the true underlying process.
 
 
+## Question 2: Visualization of Bivariate Relationship
 
 ### Scatter Plot Analysis and Commentary
 
@@ -122,78 +125,6 @@ plt.savefig('anxiety_stress_regression.png', dpi=100, bbox_inches='tight')
 plt.close()
 ```
 
-### Fit Assessment and Commentary
-
-```{python}
-#| echo: false
-# Detailed analysis of the regression fit
-print("REGRESSION FIT ANALYSIS:")
-print("========================\n")
-
-# R-squared and adjusted R-squared
-r_squared = model1.rsquared
-adj_r_squared = model1.rsquared_adj
-
-print("1. GOODNESS OF FIT:")
-print(f"   R-squared: {r_squared:.4f} ({r_squared*100:.1f}% of variance explained)")
-print(f"   Adjusted R-squared: {adj_r_squared:.4f}")
-
-if r_squared > 0.8:
-    print("   ✓ Excellent fit - model explains most of the variance")
-elif r_squared > 0.6:
-    print("   ✓ Good fit - model explains substantial variance")
-elif r_squared > 0.4:
-    print("   ⚠ Moderate fit - model explains some variance")
-else:
-    print("   ⚠ Poor fit - model explains little variance")
-
-# Statistical significance
-f_stat = model1.fvalue
-f_pvalue = model1.f_pvalue
-
-print("\n2. STATISTICAL SIGNIFICANCE:")
-print(f"   F-statistic: {f_stat:.4f}")
-print(f"   p-value: {f_pvalue:.6f}")
-
-if f_pvalue < 0.001:
-    print("   ✓ Highly significant relationship (p < 0.001)")
-elif f_pvalue < 0.01:
-    print("   ✓ Very significant relationship (p < 0.01)")
-elif f_pvalue < 0.05:
-    print("   ✓ Significant relationship (p < 0.05)")
-else:
-    print("   ⚠ Relationship not statistically significant (p ≥ 0.05)")
-
-# Coefficient significance
-coef_pvalue = model1.pvalues['StressSurvey']
-print("\n3. COEFFICIENT SIGNIFICANCE:")
-print(f"   StressSurvey coefficient p-value: {coef_pvalue:.6f}")
-
-if coef_pvalue < 0.05:
-    print("   ✓ StressSurvey coefficient is statistically significant")
-else:
-    print("   ⚠ StressSurvey coefficient is not statistically significant")
-
-# Potential issues
-print("\n4. POTENTIAL ISSUES:")
-print("   • Omitted variable bias: Time variable is missing from the model")
-print("   • Variable scaling: Using StressSurvey instead of true Stress variable")
-print(f"   • Small sample size: Only {len(observDF)} observations")
-print("   • Perfect linear relationship: Data appears artificially generated")
-
-# Residual analysis
-residuals = model1.resid
-print("\n5. RESIDUAL ANALYSIS:")
-print(f"   Mean of residuals: {residuals.mean():.6f} (should be ~0)")
-print(f"   Standard deviation of residuals: {residuals.std():.4f}")
-
-# Check for patterns in residuals
-if abs(residuals.mean()) < 0.001:
-    print("   ✓ Residuals centered around zero")
-else:
-    print("   ⚠ Residuals not centered around zero")
-```
-
 ---
 
 **SCATTER PLOT INTERPRETATION:**
@@ -241,6 +172,8 @@ print(f"\nRegression Equation: Anxiety = {intercept_time:.4f} + {time_coef:.4f} 
 The regression using Time produces the equation Anxiety = –3.68 + 5.34 × Time. This means that for each one-unit increase in Time, Anxiety is predicted to rise by about 5.34 units. The intercept of –3.68 suggests that if Time were zero, Anxiety would be negative, which isn’t realistic but reflects how the line was adjusted to fit the data. Compared to the true relationship, which is Anxiety = Stress + 0.1 × Time, the slope is far too large. The true effect of Time is only 0.1, but because Stress and Time rise together in this dataset, the regression gives Time credit for Stress’s much stronger effect. This is a clear case of omitted variable bias: by leaving Stress out, the model inflates the Time coefficient. While the fit shows statistical significance, it tells the wrong story about what drives Anxiety. In practice, the model looks convincing but is misleading because it exaggerates Time’s role and ignores the real driver.
 
 ---
+
+## Question 4: Visualization of Bivariate Relationship
 
 ### Scatter Plot: Anxiety vs Time
 
@@ -441,6 +374,81 @@ print(f"Time (β₂): {time_coef_stress:.4f}")
 print(f"\nRegression Equation: Anxiety = {intercept_stress:.4f} + {stress_coef_true:.4f} × Stress + {time_coef_stress:.4f} × Time")
 ```
 
+### Scatter Plot: Multiple Regression Visualization (Stress + Time Model)
+
+```{python}
+#| echo: false
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# Get R-squared for the plot title
+r_squared_stress_time = model4.rsquared
+
+# Create a comprehensive visualization with multiple subplots
+fig = plt.figure(figsize=(16, 5))
+
+# Plot 1: 3D Scatter Plot with Regression Plane
+ax1 = fig.add_subplot(131, projection='3d')
+
+# Scatter plot of actual data
+scatter = ax1.scatter(observDF['Stress'], observDF['Time'], observDF['Anxiety'], 
+                     c='darkgreen', marker='o', s=100, alpha=0.7, edgecolors='black', linewidth=1)
+
+# Create a mesh for the regression plane
+stress_range = np.linspace(observDF['Stress'].min(), observDF['Stress'].max(), 20)
+time_range = np.linspace(observDF['Time'].min(), observDF['Time'].max(), 20)
+stress_mesh, time_mesh = np.meshgrid(stress_range, time_range)
+
+# Calculate predicted values for the mesh
+anxiety_mesh = intercept_stress + stress_coef_true * stress_mesh + time_coef_stress * time_mesh
+
+# Plot the regression plane
+surf = ax1.plot_surface(stress_mesh, time_mesh, anxiety_mesh, alpha=0.3, color='red')
+
+ax1.set_xlabel('Stress', fontsize=10)
+ax1.set_ylabel('Time', fontsize=10)
+ax1.set_zlabel('Anxiety', fontsize=10)
+ax1.set_title('3D View: Multiple Regression\nAnxiety ~ Stress + Time', fontsize=11, fontweight='bold')
+ax1.view_init(elev=20, azim=45)
+
+# Plot 2: Actual vs Fitted Values
+ax2 = fig.add_subplot(132)
+
+fitted_values_stress = model4.fittedvalues
+ax2.scatter(observDF['Anxiety'], fitted_values_stress, color='darkgreen', s=100, alpha=0.7, edgecolors='black', linewidth=1)
+
+# Add perfect prediction line
+min_val = min(observDF['Anxiety'].min(), fitted_values_stress.min())
+max_val = max(observDF['Anxiety'].max(), fitted_values_stress.max())
+ax2.plot([min_val, max_val], [min_val, max_val], 'r--', linewidth=2, label='Perfect Prediction')
+
+ax2.set_xlabel('Actual Anxiety', fontsize=10)
+ax2.set_ylabel('Fitted Anxiety', fontsize=10)
+ax2.set_title('Actual vs Fitted Values\n(R² = {:.4f})'.format(r_squared_stress_time), fontsize=11, fontweight='bold')
+ax2.legend()
+ax2.grid(True, alpha=0.3)
+
+# Plot 3: Residuals Plot
+ax3 = fig.add_subplot(133)
+
+residuals_stress = model4.resid
+ax3.scatter(fitted_values_stress, residuals_stress, color='purple', s=100, alpha=0.7, edgecolors='black', linewidth=1)
+ax3.axhline(y=0, color='red', linewidth=2, linestyle='--')
+ax3.set_xlabel('Fitted Values', fontsize=10)
+ax3.set_ylabel('Residuals', fontsize=10)
+ax3.set_title('Residuals vs Fitted Values\n(Checking Assumptions)', fontsize=11, fontweight='bold')
+ax3.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig('stress_time_multiple_regression.png', dpi=150, bbox_inches='tight')
+plt.show()
+
+print("\n✓ Stress + Time multiple regression visualization saved as 'stress_time_multiple_regression.png'")
+```
+
+
+## Question 6: Model Comparison
+
 ### Comparison with True Relationship (Perfect Match Expected!)
 
 ---
@@ -481,3 +489,6 @@ Overall, this shows that even if a regression has a really high R-squared and ve
 **A Typical Parent** will likely believe the second headline, as they likely see the negative effects of time on social media on their children. Additionally, the parent will likely be looking for reasons to reduce the time their children spend on social media.
 
 **A Social Media Executive** will likely prefer the first headline, as they can use it to argue that time on social media is a good thing, and that it leads to decreased anxiety.
+
+## Question 9: Avoiding Misleading Statistical Significance
+
