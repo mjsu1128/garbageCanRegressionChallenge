@@ -521,7 +521,7 @@ subset_high = observDF[observDF['StressSurvey'] >= 6]
 
 **INTERPRETATION:**
 
-I chose to split the data into low-stress and high-stress subsets because StressSurvey behaves differently across those ranges. At low levels it scales cleanly as about three times Stress, making it a good proxy. However, at higher levels the survey flattens and no longer tracks Stress proportionally, which distorts the regression. Splitting the sample this way helps reveal where the proxy works and where it breaks down.
+I split the data into low-stress and high-stress subsets using StressSurvey < 6 and StressSurvey ≥ 6. Below 6, StressSurvey scales neatly at about three times Stress, so it works as a reliable proxy and the regression should capture the true relationship. Above 6, the scaling breaks down as StressSurvey flattens and no longer rises in step with Stress, which is where the regression becomes distorted. This split made it possible to see clearly where the proxy performs well and where it causes problems.
 
 ---
 
@@ -682,8 +682,10 @@ print(f"  Difference in StressSurvey coefficient: {model_low.params['StressSurve
 ```
 
 ### Interpretation of Coefficient Comparison
+
 ---
 
+**INTERPRETATION:**
 
 I wanted to dig a bit deeper into these results and assess the output of the multiple regression. In the low-stress subset, the results came out exactly as hoped. The coefficients are statistically significant and match the true relationship almost perfectly, with StressSurvey at 0.333 (which maps cleanly to a true Stress effect of 1) and Time right at 0.1. That was exciting to see because it shows the model works when the proxy behaves properly. In the high-stress subset, the coefficients are still statistically significant, but they drift far from the truth, with StressSurvey inflated and Time actually flipping negative. Seeing both side by side really highlights that significance on its own can be misleading, while in the right conditions the regression aligns perfectly with the real process.
 
